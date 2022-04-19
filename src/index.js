@@ -8,22 +8,14 @@ class WdioLightReporter extends WDIOReporter {
     options = Object.assign(options);
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =
-        options.logFile.replace(
-          "*",
-          process.argv[process.argv.length - 1] +
-            "_" +
-            Date.now() +
-            "_" +
-            process.pid
-        ) + ".json";
+        "result_" +
+        process.argv[process.argv.length - 1] +
+        Date.now() +
+        process.pid +
+        ".json";
     } else {
-      options.logFile =
-        options.logFile.replace(
-          "*",
-          +"default_" + Date.now() + "_" + process.pid
-        ) + ".json";
+      options.logFile = "result_default" + Date.now() + process.pid + ".json";
     }
-    console.log(options);
     super(options);
     this.registerListeners();
   }
