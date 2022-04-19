@@ -48,7 +48,7 @@
     "Sarfraj Akhtar"
   ],
   "peerDependencies": {
-    "@wdio/cli": "^5.8.4"
+    "@wdio/cli": "^7.19.3"
   },
   "jest": {
     "testPathIgnorePatterns": [
