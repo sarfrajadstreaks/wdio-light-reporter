@@ -1,6 +1,6 @@
 {
   "name": "wdio-light-reporter",
-  "version": "4.0.0",
+  "version": "0.0.1",
   "description": "A WebdriverIO plugin. Generates json results in light format.",
   "author": "Sarfraj Akhtar <mdsarfrajakhtar@gmail.com>",
   "homepage": "",
@@ -26,7 +26,7 @@
     "wdio-reporter"
   ],
   "bugs": {
-    "url": ""
+    "url": "http://"
   },
   "dependencies": {
     "@wdio/reporter": "^5.22.4",
