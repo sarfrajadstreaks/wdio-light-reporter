@@ -1,0 +1,55 @@
+{
+  "name": "wdio-light-reporter",
+  "version": "4.0.0",
+  "description": "A WebdriverIO plugin. Generates json results in light format.",
+  "author": "Sarfraj Akhtar <mdsarfrajakhtar@gmail.com>",
+  "homepage": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "mergeResults.js"
+  ],
+  "scripts": {
+    "lint": "eslint ./src test/",
+    "test": "jest"
+  },
+  "keywords": [
+    "light",
+    "reporter",
+    "webdriverio",
+    "wdio",
+    "wdio-reporter"
+  ],
+  "bugs": {
+    "url": ""
+  },
+  "dependencies": {
+    "@wdio/reporter": "^5.22.4",
+    "pug": "^3.0.2",
+    "strip-ansi": "^5.2.0",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.4.0",
+    "eslint-config-standard": "^10.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "jest": "^24.8.0",
+    "jest-matchers": "^20.0.3"
+  },
+  "contributors": [
+    "Jim Davis"
+  ],
+  "jest": {
+    "testPathIgnorePatterns": [
+      "./src"
+    ]
+  }
+}
