@@ -11,14 +11,18 @@ class WdioLightReporter extends WDIOReporter {
         options.outputDir +
         "/results_" +
         process.argv[process.argv.length - 1] +
+        "_" +
         Date.now() +
+        "_" +
         process.pid +
         ".json";
     } else {
       options.logFile =
         options.outputDir +
         "/results_default" +
+        "_" +
         Date.now() +
+        "_" +
         process.pid +
         ".json";
     }

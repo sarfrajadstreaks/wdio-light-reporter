@@ -7,7 +7,7 @@ const mergeResults = (...args) => {
     args[1][args[1].length - 2] === "--suite"
       ? args[1][args[1].length - 1]
       : "default";
-  const filePattern = `results_${suiteName}_`;
+  const filePattern = `results_${suiteName}_*`;
   const rawData = getDataFromFiles(dir, filePattern);
   const mergedResults = mergeData(rawData, suiteName);
   writeFile(dir, mergedResults, suiteName);
