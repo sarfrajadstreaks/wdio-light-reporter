@@ -11,7 +11,7 @@ const mergeResults = (...args) => {
   const rawData = getDataFromFiles(dir, filePattern);
   const mergedResults = mergeData(rawData, suiteName);
   writeFile(dir, mergedResults, suiteName);
-  generateReport(dir, mergedResults);
+  generateReport(dir, mergedResults, suiteName);
 };
 function getFiles(dir, filePattern) {
   let files = fs.readdirSync(dir).filter(function (file) {
@@ -107,14 +107,14 @@ function writeFile(dir, mergedResults, suiteName) {
   );
   fs.writeFileSync(filePath, JSON.stringify(mergedResults.mergeResults));
 }
-function generateReport(dir, mergedData) {
+function generateReport(dir, mergedData, suiteName) {
   const options = { pretty: true };
   try {
     const res = renderFile(
       path.join(__dirname, "./suite_template.pug"),
       Object.assign(mergedData.mergeResults, options)
     );
-    fs.writeFileSync(path.join(dir, "index.html"), res);
+    fs.writeFileSync(path.join(dir, suiteName + ".html"), res);
   } catch (error) {
     console.error(error);
   }
