@@ -51,6 +51,7 @@ function mergeData(rawData, suiteName) {
           pendingPercent: 0,
           skipped: 0,
           timeStamp: "",
+          envs: [],
         },
         scenarios: [],
         developer: "https://github.com/sarfrajadstreaks",
@@ -63,6 +64,7 @@ function mergeData(rawData, suiteName) {
     reference.stats.passes += data.stats.passes;
     reference.stats.skipped += data.stats.skipped;
     reference.stats.failures += data.stats.failures;
+    reference.stats.envs = data.stats.envs;
     if (reference.stats.start === "") {
       reference.stats.start = data.stats.start;
     }

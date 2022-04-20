@@ -33,6 +33,7 @@ class WdioLightReporter extends WDIOReporter {
   onRunnerStart(runner) {
     this.config = runner.config;
     this.sanitizedCaps = runner.sanitizedCapabilities;
+    this.envs = runner.sanitizedCapabilities.split(".");
     if (runner.isMultiremote) {
       this.sessionId = {};
       for (const name in runner.capabilities) {
@@ -49,7 +50,7 @@ class WdioLightReporter extends WDIOReporter {
       this.testsuite = "default";
     }
     this.results = {
-      stats: new Stats(runner.start),
+      stats: new Stats(runner.start, this.envs),
       scenarios: [],
       suites: this.testsuite,
       copyrightYear: new Date().getFullYear(),
@@ -101,21 +102,18 @@ class WdioLightReporter extends WDIOReporter {
 
   // addContext functionality
   registerListeners() {
-    process.on(
-      "wdio-mochawesome-reporter:addContext",
-      this.addSomeContext.bind(this)
-    );
+    process.on("wdio-light-reporter:addLabel", this.addSomeContext.bind(this));
   }
 
   addSomeContext(object) {
     this.currTest.context.push(object);
   }
 
-  static addContext(context) {
-    process.emit("wdio-mochawesome-reporter:addContext", context);
+  static addLabel(context) {
+    process.emit("wdio-light-reporter:addLabel", context);
   }
   static addStep(context) {
-    process.emit("wdio-mochawesome-reporter:addContext", context);
+    process.emit("wdio-light-reporter:addLabel", context);
   }
 }
 
