@@ -13,7 +13,7 @@ module.exports = class {
     this.uuid = uuid();
     this.beforeHooks = [];
     this.afterHooks = [];
-    this.title = `${this.title}`;
+    this.title = data.title;
     // if (!isRoot) {
     //   this.title = data.title;
 

@@ -59,7 +59,7 @@ class WdioLightReporter extends WDIOReporter {
   }
 
   onSuiteStart(scenario) {
-    this.currSuite = new Scenarios(false, scenario, this.sanitizedCaps);
+    this.currSuite = new Scenarios(false, scenario);
     this.results.stats.incrementScenarios();
   }
 
