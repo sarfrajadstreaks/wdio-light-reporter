@@ -35,14 +35,14 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "eslint": "^4.4.0",
+    "eslint": "^8.13.0",
     "eslint-config-standard": "^10.2.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-node": "^5.1.0",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
-    "jest": "^24.8.0",
-    "jest-matchers": "^20.0.3"
+    "jest": "^27.5.1",
+    "jest-matchers": "^18.1.0"
   },
   "contributors": [
     "Sarfraj Akhtar"

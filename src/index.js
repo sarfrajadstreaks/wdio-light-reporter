@@ -9,7 +9,7 @@ class WdioLightReporter extends WDIOReporter {
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =
         options.outputDir +
-        "/result_" +
+        "/results_" +
         process.argv[process.argv.length - 1] +
         Date.now() +
         process.pid +
@@ -17,7 +17,7 @@ class WdioLightReporter extends WDIOReporter {
     } else {
       options.logFile =
         options.outputDir +
-        "/result_default" +
+        "/results_default" +
         Date.now() +
         process.pid +
         ".json";
