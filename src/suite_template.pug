@@ -138,15 +138,21 @@ html
                         else 
                           button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
                       div.accordion-collapse.collapse(id="collapse_"+ts.uuid aria-labelledby="heading_"+ts.uuid data-bs-parent="#accordionExample")
-                        div.accordion-body
+                         div.accordion-body
                           if ts.state==="failed"
                             div.alert.alert-danger(role="alert")= ts.err.stack
-                          each val in JSON.parse(ts.context)
+                          each val,i in JSON.parse(ts.context)
                             if typeof val=="object"
                               if val.title==="Screenshot"
-                                img(src=val.value)
+                                img(src=val.value, style={width:" -webkit-fill-available",cursor: "pointer"}, data-bs-toggle="modal",data-bs-target="#Modal_"+ts.uuid)
+                                div.modal.fade(id="Modal_"+ts.uuid,tabindex="-1" aria-labelledby="ModalLabel_"+ts.uuid aria-hidden="true")
+                                  div.modal-dialog.modal-xl
+                                    div.modal-content
+                                      div.modal-body
+                                        img(src=val.value,style={width:" -webkit-fill-available"})
+
                             else 
-                              div= val 
+                              div= "⇛ "+ val  
 
                     
         
