@@ -8,13 +8,19 @@ class WdioLightReporter extends WDIOReporter {
     options = Object.assign(options);
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =
-        "result_" +
+        options.outputDir +
+        "/result_" +
         process.argv[process.argv.length - 1] +
         Date.now() +
         process.pid +
         ".json";
     } else {
-      options.logFile = "result_default" + Date.now() + process.pid + ".json";
+      options.logFile =
+        options.outputDir +
+        "/result_default" +
+        Date.now() +
+        process.pid +
+        ".json";
     }
     super(options);
     this.registerListeners();
@@ -59,7 +65,7 @@ class WdioLightReporter extends WDIOReporter {
 
   onTestSkip(test) {
     this.currTest = new Test(test, this.currSuite.uuid);
-    this.currTest.addSessionContext(this.sessionId);
+    //this.currTest.addSessionContext(this.sessionId);
   }
 
   onAfterCommand(cmd) {

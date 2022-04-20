@@ -17,7 +17,8 @@ html
         border-bottom:0
       }
     script.
-      var chartData=[[
+      var scenariosData=!{JSON.stringify(scenarios)};
+      var barGraphData=[[
             "Name",
             "Passed",
             { role: "style" },
@@ -26,18 +27,18 @@ html
             "Skipped",
             { role: "style" },
             { role: "annotation" },
-          ],[
-            "Sc1",10,"#75ffac",4,"#ff7575",2,"#75d3ff",""
-          ],
-          [
-            "Sc2",10,"#75ffac",7,"#ff7575",2,"#75d3ff",""
           ]];
+      scenariosData.map((d,i)=>{
+        barGraphData.push([d.title,d.passes.length,"#75ffac",d.failures.length,"#ff7575",d.skipped.length,"#75d3ff",''])
+      })
+      var chartData=barGraphData;
       google.charts.load("current", { packages: ["corechart"] });
       google.charts.setOnLoadCallback(drawChart);
      
       function drawChart(suites) {
         var data = google.visualization.arrayToDataTable(chartData);
         var options = {
+          title: '#{suiteName}',
           tooltip: { textStyle: { fontName: '"Arial"' } },
           legend: "none",
           bar: { groupWidth: "75%" },
@@ -51,16 +52,16 @@ html
       }
         
     script.
-
+      var scenariosData=!{JSON.stringify(stats)};
       var piechartData=[
-        ["Status", "per Run"],["Passed", 10],["Failed", 4],["Skipped", 2]
+        ["Status", "per Run"],["Passed", scenariosData.passes],["Failed", scenariosData.failures],["Skipped", scenariosData.skipped]
         ];
       google.charts.load("current", { packages: ["corechart"] });
       google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable(piechartData);
         var options = {
-          title: "",
+          title: '#{suiteName}',
           legend: "none",
           colors: ["#75ffac", "#ff7575", "#75d3ff"],
           pieSliceText: "label",
@@ -131,10 +132,22 @@ html
               each sc,i in scenarios
                 each ts in sc.tests
                   div.accordion-item.d-none(scenarios="sc_"+sc.uuid)
-                      h2.accordion-heade(id="heading_"+ts.uuid)
-                        button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
+                      h2.accordion-header(id="heading_"+ts.uuid)
+                        if ts.state=="failed"
+                          button.accordion-button.collapsed.alert-danger(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
+                        else 
+                          button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
                       div.accordion-collapse.collapse(id="collapse_"+ts.uuid aria-labelledby="heading_"+ts.uuid data-bs-parent="#accordionExample")
-                        div.accordion-body Sample Steps or Errors 
+                        div.accordion-body
+                          if ts.state==="failed"
+                            div.alert.alert-danger(role="alert")= ts.err.stack
+                          each val in JSON.parse(ts.context)
+                            if typeof val=="object"
+                              if val.title==="Screenshots"
+                                img(src=val.value)
+                            else 
+                              div="String" 
+
                     
         
 
