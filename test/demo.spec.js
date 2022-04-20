@@ -1,2 +1,2 @@
 const mergeResults = require("../src/mergeResults");
-mergeResults("./Results", ["--suite", "emptySuite"]);
+mergeResults("./Results", ["--suite", "default"]);
