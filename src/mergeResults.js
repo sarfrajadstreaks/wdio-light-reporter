@@ -107,6 +107,9 @@ function writeFile(dir, mergedResults, suiteName) {
     dir,
     "runReport_" + suiteName + "_" + timeStamp + ".json"
   );
+  mergedResults.fileNames.forEach((fileName) => {
+    fs.unlinkSync(dir + "/" + fileName);
+  });
   fs.writeFileSync(filePath, JSON.stringify(mergedResults.mergeResults));
 }
 function generateReport(dir, mergedData, suiteName) {
