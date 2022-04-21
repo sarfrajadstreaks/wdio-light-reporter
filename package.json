@@ -1,13 +1,13 @@
 {
   "name": "wdio-light-reporter",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A WebdriverIO plugin. Generates json results in light format.",
   "author": "Sarfraj Akhtar <mdsarfrajakhtar@gmail.com>",
   "homepage": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/sarfrajadstreaks/wdio-light-reporter.git"
   },
   "main": "src/index.js",
   "files": [
@@ -26,7 +26,7 @@
     "wdio-reporter"
   ],
   "bugs": {
-    "url": "http://"
+    "url": "https://github.com/sarfrajadstreaks/wdio-light-reporter/issues"
   },
   "dependencies": {
     "@wdio/reporter": "^5.22.4",

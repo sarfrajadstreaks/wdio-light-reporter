@@ -6,6 +6,9 @@ const process = require("process");
 class WdioLightReporter extends WDIOReporter {
   constructor(options) {
     options = Object.assign(options);
+    if (options.outputDir === undefined) {
+      options.outputDir = "./Light_Results";
+    }
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =
         options.outputDir +
@@ -65,12 +68,10 @@ class WdioLightReporter extends WDIOReporter {
 
   onTestStart(test) {
     this.currTest = new Test(test, this.currSuite.uuid);
-    //this.currTest.addSessionContext(this.sessionId);
   }
 
   onTestSkip(test) {
     this.currTest = new Test(test, this.currSuite.uuid);
-    //this.currTest.addSessionContext(this.sessionId);
   }
 
   onAfterCommand(cmd) {
@@ -91,7 +92,6 @@ class WdioLightReporter extends WDIOReporter {
   onSuiteEnd(suite) {
     this.currSuite.duration = suite.duration;
     this.results.scenarios.push(this.currSuite);
-    // console.log(JSON.stringify(this.results))
   }
 
   onRunnerEnd(runner) {
@@ -110,9 +110,6 @@ class WdioLightReporter extends WDIOReporter {
   }
 
   static addLabel(context) {
-    process.emit("wdio-light-reporter:addLabel", context);
-  }
-  static addStep(context) {
     process.emit("wdio-light-reporter:addLabel", context);
   }
 }

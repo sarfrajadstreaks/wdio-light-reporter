@@ -8,9 +8,6 @@ module.exports = class {
     this.start = start;
     this.end = "";
     this.duration = 0;
-    this.passPercent = 0;
-    this.failurePercent = 0;
-    this.skippedPercent = 0;
     this.envs = env;
   }
 
@@ -20,24 +17,12 @@ module.exports = class {
 
   incrementTests(result) {
     this.tests += 1;
-    this.testsRegistered += 1;
     if (result.pass) {
       this.passes += 1;
     } else if (result.fail) {
       this.failures += 1;
-    } else if (result.pending) {
-      this.pending += 1;
+    } else if (result.skipped) {
       this.skipped += 1;
-      this.hasSkipped = true;
     }
-
-    this.passPercent =
-      this.tests === 0 ? 0 : Math.round((this.passes / this.tests) * 100);
-    this.failurePercent =
-      this.tests === 0
-        ? 0
-        : Math.round((this.failurePercent / this.tests) * 100);
-    this.skippedPercent =
-      this.tests === 0 ? 0 : 100 - (this.failurePercent + this.passPercent);
   }
 };

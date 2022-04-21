@@ -1,147 +1,125 @@
-const WdioCoolReporter = require("../src/index").default;
+const WdioLightReporter = require("../src/index").default;
 
 describe("Reporter Tests", () => {
-    const runner = {
-        sanitizedCapabilities: "chrome",
-        sessionId: "123456",
+  const runner = {
+    sanitizedCapabilities: "chrome",
+    sessionId: "123456",
+  };
+  let reporter;
+
+  beforeEach(() => {
+    reporter = new WdioLightReporter({});
+    reporter.onRunnerStart(runner);
+  });
+
+  it("onRunnerStart", () => {
+    expect(reporter.results).toMatchObject({
+      scenarios: expect.anything(),
+      copyrightYear: expect.anything(),
+      stats: expect.anything(),
+      suites: expect.anything(),
+    });
+    expect(reporter.sanitizedCaps).toBe(runner.sanitizedCapabilities);
+    expect(reporter.sessionId).toBe(runner.sessionId);
+  });
+
+  it("onSuiteStart", () => {
+    const scenario = { title: "sample suite" };
+    reporter.onSuiteStart(scenario);
+
+    expect(reporter.results.stats.scenarios).toBe(1);
+    expect(reporter.currSuite.title).toBe(`${scenario.title}`);
+  });
+
+  it("onTestStart", () => {
+    const scenario = { title: "sample scenario", uuid: "1234" };
+    const test = { title: "this is a test", uuid: "9876" };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
+
+    expect(reporter.currTest.title).toBe(test.title);
+  });
+  it("onAfterCommand", () => {
+    const scenario = { title: "sample scenario", uuid: "1234" };
+    const test = { title: "this is a test", uuid: "9876" };
+    const command = {
+      endpoint: "/session/123456/screenshot/",
+      result: { value: "abcdefg" },
     };
-    let reporter;
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
 
-    beforeEach(() => {
-        reporter = new WdioCoolReporter({});
-        reporter.onRunnerStart(runner);
+    reporter.onAfterCommand(command);
+    expect(reporter.currTest.context[0]).toMatchObject({
+      title: "Screenshot",
+      value: "data:image/jpeg;base64,abcdefg",
     });
+  });
 
-    it("onRunnerStart", () => {
-        expect(reporter.results).toMatchObject({
-            copyrightYear: expect.anything(),
-            stats: expect.anything(),
-            suites: expect.anything(),
-        });
-        expect(reporter.sanitizedCaps).toBe(runner.sanitizedCapabilities);
-        expect(reporter.sessionId).toBe(runner.sessionId);
-    });
+  it("onTestEnd", () => {
+    const scenario = { title: "sample scenario", uuid: "1234" };
+    const test = {
+      title: "this is a test",
+      uuid: "9876",
+      _duration: "123",
+      state: "passed",
+    };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
 
-    it("onSuiteStart", () => {
-        const suite = { title: "sample suite" };
+    reporter.onTestEnd(test);
+    expect(reporter.currTest.duration).toBe(test._duration);
+    expect(reporter.currTest.pass).toBe(true);
+    expect(reporter.currSuite.tests.length).toBe(1);
+    expect(reporter.results.stats.tests).toBe(1);
+  });
 
-        reporter.onSuiteStart(suite);
-        console.log(JSON.stringify(reporter.results));
-        expect(reporter.results.stats.suites).toBe(1);
-        expect(reporter.currSuite.title).toBe(
-            `${suite.title} (${runner.sanitizedCapabilities})`
-        );
-    });
+  it("onTestEnd - skipped", () => {
+    const scenario = { title: "sample scenario", uuid: "1234" };
+    const test = {
+      title: "this is a test",
+      uuid: "9876",
+      _duration: "123",
+      state: "skipped",
+    };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
 
-    it("onTestStart", () => {
-        const suite = { title: "sample suite", uuid: "1234" };
-        const test = { title: "this is a test", uuid: "9876" };
+    reporter.onTestEnd(test);
+    expect(reporter.currTest.duration).toBe(test._duration);
+    expect(reporter.currSuite.tests.length).toBe(1);
+    expect(reporter.results.stats.tests).toBe(1);
+  });
 
-        reporter.onSuiteStart(suite);
-        reporter.onTestStart(test);
-        expect(reporter.currTest.title).toBe(test.title);
-        expect(reporter.currTest.context[0]).toMatchObject({
-            title: "Session Id",
-            value: runner.sessionId,
-        });
-    });
+  it("onSuiteEnd", () => {
+    const scenario = {
+      title: "sample scenario",
+      uuid: "1234",
+      duration: "897",
+    };
+    const test = {
+      title: "this is a test",
+      uuid: "9876",
+      _duration: "123",
+      state: "passed",
+    };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
+    reporter.onTestEnd(test);
 
-    it("onTestSkipped", () => {
-        const suite = { title: "sample suite", uuid: "1234" };
-        const test = { title: "this is a test", uuid: "9876" };
+    reporter.onSuiteEnd(scenario);
+    console.log(reporter.results);
+    expect(reporter.currSuite.duration).toBe(scenario.duration);
+    expect(reporter.results.stats.scenarios).toBe(1);
+  });
 
-        reporter.onSuiteStart(suite);
-        reporter.onTestStart(test);
-        expect(reporter.currTest.title).toBe(test.title);
-        expect(reporter.currTest.context[0]).toMatchObject({
-            title: "Session Id",
-            value: runner.sessionId,
-        });
-    });
+  it("onRunnerEnd", () => {
+    reporter.write = jest.fn();
+    runner.end = "1234567890";
+    runner.duration = "9987";
 
-    it("onAfterCommand", () => {
-        const suite = { title: "sample suite", uuid: "1234" };
-        const test = { title: "this is a test", uuid: "9876" };
-        const command = {
-            endpoint: "/session/123456/screenshot/",
-            result: { value: "abcdefg" },
-        };
-        reporter.onSuiteStart(suite);
-        reporter.onTestStart(test);
-
-        reporter.onAfterCommand(command);
-        expect(reporter.currTest.context[0]).toMatchObject({
-            title: "Session Id",
-            value: runner.sessionId,
-        });
-        expect(reporter.currTest.context[1]).toMatchObject({
-            title: "Screenshot",
-            value: "data:image/jpeg;base64,abcdefg",
-        });
-    });
-
-    it("onTestEnd", () => {
-        const suite = { title: "sample suite", uuid: "1234" };
-        const test = {
-            title: "this is a test",
-            uuid: "9876",
-            _duration: "123",
-            state: "passed",
-        };
-        reporter.onSuiteStart(suite);
-        reporter.onTestStart(test);
-
-        reporter.onTestEnd(test);
-        expect(reporter.currTest.duration).toBe(test._duration);
-        expect(reporter.currTest.pass).toBe(true);
-        expect(reporter.currSuite.tests.length).toBe(1);
-        expect(reporter.results.stats.tests).toBe(1);
-    });
-
-    it("onTestEnd - skipped", () => {
-        const suite = { title: "sample suite", uuid: "1234" };
-        const test = {
-            title: "this is a test",
-            uuid: "9876",
-            _duration: "123",
-            state: "skipped",
-        };
-        reporter.onSuiteStart(suite);
-        reporter.onTestStart(test);
-
-        reporter.onTestEnd(test);
-        expect(reporter.currTest.duration).toBe(test._duration);
-        expect(reporter.currTest.pending).toBe(true);
-        expect(reporter.currSuite.tests.length).toBe(1);
-        expect(reporter.results.stats.tests).toBe(1);
-    });
-
-    it("onSuiteEnd", () => {
-        const suite = { title: "sample suite", uuid: "1234", duration: "897" };
-        const test = {
-            title: "this is a test",
-            uuid: "9876",
-            _duration: "123",
-            state: "passed",
-        };
-        reporter.onSuiteStart(suite);
-        reporter.onTestStart(test);
-        reporter.onTestEnd(test);
-
-        reporter.onSuiteEnd(suite);
-
-        expect(reporter.currSuite.duration).toBe(suite.duration);
-        expect(reporter.results.stats.suites).toBe(1);
-        expect(reporter.results.suites.suites.length).toBe(1);
-    });
-
-    it("onRunnerEnd", () => {
-        reporter.write = jest.fn();
-        runner.end = "1234567890";
-        runner.duration = "9987";
-
-        reporter.onRunnerEnd(runner);
-        expect(reporter.results.stats.end).toBe(runner.end);
-        expect(reporter.results.stats.duration).toBe(runner.duration);
-    });
+    reporter.onRunnerEnd(runner);
+    expect(reporter.results.stats.end).toBe(runner.end);
+    expect(reporter.results.stats.duration).toBe(runner.duration);
+  });
 });
