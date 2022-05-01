@@ -92,16 +92,16 @@ html
       div.col-sm-10.mx-auto
         div.row.no-gutters.mt-3
           div.col-sm-2.no-gutters
-            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Tests: #{stats.tests}
           div.col-sm-2
-            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Passed: #{stats.passes}
           div.col-sm-2
-            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Failed: #{stats.failures}
           div.col-sm-2
-            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Skipped: #{stats.skipped}
           div.col-sm-2
             div.card
@@ -120,9 +120,8 @@ html
             each val,i in stats.envs 
               - var env=val.split(",")
               div.accordion-item
-                h2.accordion-header(id="flush-heading"+i)
-                  h6 
-                    span.badge.bg-secondary= env[2]+ " "+ env[0]+ " "+ env[1]
+                h6.accordion-header(id="flush-heading"+i)
+                  span.badge.bg-light.text-dark= env[2]+ "➤"+ env[0]+ "➤"+ env[1]
                   div.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse"+i aria-expanded="false" aria-controls="flush-collapse"+i)
                     div.col-sm-2.no-gutters
                       div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
@@ -139,7 +138,7 @@ html
                     div.col-sm-2
                       div.card
                         div.card-body(style={padding:0})
-                          div(id="pie_chart_div_"+i)
+                          div(id="pie_chart_div_"+i , style={width:"100%", height:"100px"})
                             script.
                               var locator="#{val}".split(",");
                               var data=!{JSON.stringify(runs)}[locator[2]][locator[3]!=undefined?locator[3]:"default"][locator[0]][locator[1]].stats
@@ -147,7 +146,7 @@ html
                     div.col-sm-2
                       div.card
                         div.card-body(style={padding:0})
-                          div(id="bar_chart_div_"+i)
+                          div(id="bar_chart_div_"+i , style={width:"100%", height:"100px"})
                             script.
                               var locator="#{val}".split(",");
                               var data=!{JSON.stringify(runs)}[locator[2]][locator[3]!=undefined?locator[3]:"default"][locator[0]][locator[1]].scenarios
