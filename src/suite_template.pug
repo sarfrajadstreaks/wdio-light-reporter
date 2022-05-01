@@ -21,41 +21,6 @@ html
         background-color: #dde3eb !important;
         border-color: #b4b6b9 !important
       }
-    //- script.
-    //-   var scenariosData=!{JSON.stringify(scenarios)};
-    //-   var barGraphData=[[
-    //-         "Name",
-    //-         "Passed",
-    //-         { role: "style" },
-    //-         "Failed",
-    //-         { role: "style" },
-    //-         "Skipped",
-    //-         { role: "style" },
-    //-         { role: "annotation" },
-    //-       ]];
-    //-   scenariosData.map((d,i)=>{
-    //-     barGraphData.push([d.title,d.passes.length,"#75ffac",d.failures.length,"#ff7575",d.skipped.length,"#75d3ff",''])
-    //-   })
-    //-   var chartData=barGraphData;
-    //-   google.charts.load("current", { packages: ["corechart"] });
-    //-   google.charts.setOnLoadCallback(drawChart);
-     
-    //-   function drawChart(suites) {
-    //-     var data = google.visualization.arrayToDataTable(chartData);
-    //-     var options = {
-    //-       title: '#{suiteName}',
-    //-       tooltip: { textStyle: { fontName: '"Arial"' } },
-    //-       legend: "none",
-    //-       bar: { groupWidth: "75%" },
-    //-       isStacked: true,
-    //-       colors: ["#75ffac", "#ff7575", "#75d3ff"],
-    //-     };
-    //-     var chart = new google.visualization.ColumnChart(
-    //-       document.getElementById("bar_chart_div")
-    //-     );
-    //-     chart.draw(data, options);
-    //-   }
-        
     script.
       function generatePieChat(val,location){
         var piechartData=[["Status", "per Run"],["Passed", val.passes],["Failed", val.failures],["Skipped", val.skipped]];
@@ -127,16 +92,16 @@ html
       div.col-sm-10.mx-auto
         div.row.no-gutters.mt-3
           div.col-sm-2.no-gutters
-            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Tests: #{stats.tests}
           div.col-sm-2
-            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Passed: #{stats.passes}
           div.col-sm-2
-            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Failed: #{stats.failures}
           div.col-sm-2
-            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+            div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
               div.card-body(style={"flex": "0 1 auto"}) Skipped: #{stats.skipped}
           div.col-sm-2
             div.card
@@ -160,16 +125,16 @@ html
                     span.badge.bg-secondary= env[2]+ " "+ env[0]+ " "+ env[1]
                   div.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse"+i aria-expanded="false" aria-controls="flush-collapse"+i)
                     div.col-sm-2.no-gutters
-                      div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
                         div.card-body(style={"flex": "0 1 auto"}) Tests: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.tests}
                     div.col-sm-2
-                      div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
                         div.card-body(style={"flex": "0 1 auto"}) Passed: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.passes}
                     div.col-sm-2
-                      div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
                         div.card-body(style={"flex": "0 1 auto"}) Failed: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.failures}
                     div.col-sm-2
-                      div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
                         div.card-body(style={"flex": "0 1 auto"}) Skipped: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.skipped}
                     div.col-sm-2
                       div.card
@@ -188,33 +153,77 @@ html
                               var data=!{JSON.stringify(runs)}[locator[2]][locator[3]!=undefined?locator[3]:"default"][locator[0]][locator[1]].scenarios
                               generateBarChart(null,data, document.getElementById('bar_chart_div_'+#{i}),false);
 
-                div.accordion-collapse.collapse(id="flush-collapse"+i aria-labelledby="flush-heading"+i data-bs-parent="#accordionFlushExample")
-                  div.accordion-body Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class.
+                div.accordion-collapse.collapse.show(id="flush-collapse"+i aria-labelledby="flush-heading"+i data-bs-parent="#accordionFlushExample")
+                  div.accordion-body(style={display: "flex"})
+                    div.col-sm-6
+                      div.card
+                        div.card-body
+                          h5.card-title Scenarios
+                          ul.list-group(id="sc_list")
+                            each val in runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].scenarios
+                              li.list-group-item.text-truncate(id="sc_"+val.uuid) #{val.title}
+                                span.badge.bg-secondary.float-end #{val.duration} ms
+                                div.progress
+                                  div.progress-bar.progress-bar-striped.bg-success(role="progressbar" style="width: "+(val.passes.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.passes.length/val.tests.length)*100+ "%"
+                                  div.progress-bar.progress-bar-striped.bg-danger(role="progressbar" style="width: "+(val.failures.length/val.tests.length)*100+"%" aria-valuemax="100")=(val.failures.length/val.tests.length)*100+"%"
+                                  div.progress-bar.progress-bar-striped.bg-info(role="progressbar" style="width: "+(val.skipped.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.skipped.length/val.tests.length)*100+"%" 
+
+                    div.col-sm-6
+                      div.card
+                        div.card-body
+                          h5.card-title TestCases
+                          div.accordion#accordionExample
+                            each sc,i in runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].scenarios
+                              each ts in sc.tests
+                                div.accordion-item.d-none(scenarios="sc_"+sc.uuid)
+                                    h2.accordion-header(id="heading_"+ts.uuid)
+                                      if ts.state=="failed"
+                                        button.accordion-button.collapsed.alert-danger(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
+                                      else 
+                                        button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
+                                    div.accordion-collapse.collapse(id="collapse_"+ts.uuid aria-labelledby="heading_"+ts.uuid data-bs-parent="#accordionExample")
+                                      div.accordion-body
+                                        if ts.state==="failed"
+                                          div.alert.alert-danger(role="alert")= ts.err.stack
+                                        each val,i in JSON.parse(ts.context)
+                                          if typeof val=="object"
+                                            if val.title==="Screenshot"
+                                              img(src=val.value, style={width:" -webkit-fill-available",cursor: "pointer"}, data-bs-toggle="modal",data-bs-target="#Modal_"+ts.uuid)
+                                              div.modal.fade(id="Modal_"+ts.uuid,tabindex="-1" aria-labelledby="ModalLabel_"+ts.uuid aria-hidden="true")
+                                                div.modal-dialog.modal-xl
+                                                  div.modal-content
+                                                    div.modal-body
+                                                      img(src=val.value,style={width:" -webkit-fill-available"})
+
+                                          else 
+                                            div= "⇛ "+ val 
         
 
-  //- script.
-    var scenarios=document.querySelector('#sc_list');
-    var sc_list= Array.prototype.slice.call(scenarios.children);
-    sc_list.forEach((ele)=>{
-      sc_list[0].className=sc_list[0].className+" active"
-      document.querySelectorAll(`[scenarios="${sc_list[0].id}"]`).forEach((ts)=>{
-          //-  console.log(ts.className='accordion-item')
-           ts.className='accordion-item'
-         })
-      //- document.querySelector(`[scenarios="${}"]`);
-      //- document.querySelectorAll('[scenarios^="sc_"]');
-      //- document.querySelector(`[scenarios="${this.id}"]`)
-      ele.addEventListener("click", function () {
-       for(let i=0;i<sc_list.length;i++){
-         sc_list[i].className="list-group-item text-truncate"
-         document.querySelectorAll(`[scenarios="${sc_list[i].id}"]`).forEach((ts)=>{
-           ts.className+=" d-none"
-         })
-       }
-       this.className=this.className+ " active"
-       document.querySelectorAll(`[scenarios="${this.id}"]`).forEach((ts)=>{
-           ts.className='accordion-item'
+  script.
+    var scenarios=document.querySelectorAll('#sc_list');
+    scenarios.forEach(scenario=>{
+      var sc_list= Array.prototype.slice.call(scenario.children);
+      sc_list.forEach((ele)=>{
+        sc_list[0].className=sc_list[0].className+" active"
+        document.querySelectorAll(`[scenarios="${sc_list[0].id}"]`).forEach((ts)=>{
+            //-  console.log(ts.className='accordion-item')
+            ts.className='accordion-item'
+          })
+        //- document.querySelector(`[scenarios="${}"]`);
+        //- document.querySelectorAll('[scenarios^="sc_"]');
+        //- document.querySelector(`[scenarios="${this.id}"]`)
+        ele.addEventListener("click", function () {
+        for(let i=0;i<sc_list.length;i++){
+          sc_list[i].className="list-group-item text-truncate"
+          document.querySelectorAll(`[scenarios="${sc_list[i].id}"]`).forEach((ts)=>{
+            ts.className+=" d-none"
+          })
+        }
+        this.className=this.className+ " active"
+        document.querySelectorAll(`[scenarios="${this.id}"]`).forEach((ts)=>{
+            ts.className='accordion-item'
+          })
         })
-      
       })
     })
+   
