@@ -22,182 +22,207 @@ html
         border-color: #b4b6b9 !important
       }
     script.
-      var scenariosData=!{JSON.stringify(scenarios)};
-      var barGraphData=[[
-            "Name",
-            "Passed",
-            { role: "style" },
-            "Failed",
-            { role: "style" },
-            "Skipped",
-            { role: "style" },
-            { role: "annotation" },
-          ]];
-      scenariosData.map((d,i)=>{
-        barGraphData.push([d.title,d.passes.length,"#75ffac",d.failures.length,"#ff7575",d.skipped.length,"#75d3ff",''])
-      })
-      var chartData=barGraphData;
-      google.charts.load("current", { packages: ["corechart"] });
-      google.charts.setOnLoadCallback(drawChart);
-     
-      function drawChart(suites) {
-        var data = google.visualization.arrayToDataTable(chartData);
-        var options = {
-          title: '#{suiteName}',
-          tooltip: { textStyle: { fontName: '"Arial"' } },
-          legend: "none",
-          bar: { groupWidth: "75%" },
-          isStacked: true,
-          colors: ["#75ffac", "#ff7575", "#75d3ff"],
-        };
-        var chart = new google.visualization.ColumnChart(
-          document.getElementById("bar_chart_div")
-        );
-        chart.draw(data, options);
+      function generatePieChat(val,location){
+        var piechartData=[["Status", "per Run"],["Passed", val.passes],["Failed", val.failures],["Skipped", val.skipped]];
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable(piechartData);
+          var options = {
+            title: '#{suiteName}',
+            legend: "none",
+            colors: ["#75ffac", "#ff7575", "#75d3ff"],
+            pieSliceText: "label",
+            slices: {
+              1: { offset: 0.3 },
+              2: { offset: 0.2 },
+            },
+          };
+          var chart = new google.visualization.PieChart(location);
+          chart.draw(data, options);
+        }
       }
-        
-    script.
-      var scenariosData=!{JSON.stringify(stats)};
-      var piechartData=[
-        ["Status", "per Run"],["Passed", scenariosData.passes],["Failed", scenariosData.failures],["Skipped", scenariosData.skipped]
-        ];
-      google.charts.load("current", { packages: ["corechart"] });
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable(piechartData);
-        var options = {
-          title: '#{suiteName}',
-          legend: "none",
-          colors: ["#75ffac", "#ff7575", "#75d3ff"],
-          pieSliceText: "label",
-          slices: {
-            1: { offset: 0.3 },
-            2: { offset: 0.2 },
-          },
-        };
-
-        var chart = new google.visualization.PieChart(
-          document.getElementById("pie_chart_div")
-        );
-        chart.draw(data, options);
+      function generateBarChart(val,runs,location,isRoot){
+        var barGraphData=[["Name","Passed",{ role: "style" },"Failed", { role: "style" },"Skipped",{ role: "style" },{ role: "annotation" }]];
+        if(isRoot){
+          val.envs.map((d)=>{
+          let env=d.split(",")
+          barGraphData.push(
+            [d,runs[env[2]][env[3]!=undefined?env[3]:"default"][env[0]][env[1]].stats.passes,"#75ffac",runs[env[2]][env[3]!=undefined?env[3]:"default"][env[0]][env[1]].stats.failures,
+            "#ff7575",
+            runs[env[2]][env[3]!=undefined?env[3]:"default"][env[0]][env[1]].stats.skipped,
+            "#75d3ff",
+            ''])
+          })
+        }else{
+          runs.map(s=>{
+             barGraphData.push([s.title,s.passes.length,"#75ffac",s.failures.length,"#ff7575",s.skipped.length,"#75d3ff",''])
+          })
+        }
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable(barGraphData);
+          var options = {
+            title: '#{suiteName}',
+            tooltip: { textStyle: { fontName: '"Arial"' } },
+            legend: "none",
+            bar: { groupWidth: "75%" },
+            isStacked: true,
+            colors: ["#75ffac", "#ff7575", "#75d3ff"],
+          };
+          var chart = new google.visualization.ColumnChart(location);
+          chart.draw(data, options);
+        }
       }
 
     
   body#page-top
-   nav.navbar.navbar-expand-sm.navbar-dark.shadow-sm.p-3.mb-2(style={background:"cadetblue"})
-    div.container-fluid
-      ul.navbar-nav
-        li.nav-item
-          a( href="#").nav-link.active
-            img(src="data:image/png;base64,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" alt="cool_logo")
-        li.nav-item
-          a( href="#").nav-link.active= 'Light Reporter : '+ suiteName
-      button.btn.btn-info.float-end(type="button" data-bs-toggle="modal" data-bs-target="#env") Environment
-          div.modal.fade(id="env",tabindex="-1" aria-labelledby="Modalenv" aria-hidden="true")
-            div.modal-dialog
-                div.modal-content
-                  div.modal-body(style={display: "flex"})
-                    div= 'BROWSER : '+ stats.envs[0]
-                    div= 'BROWSER VER : '+ stats.envs[1]
-                    div= 'PLATFORM : '+stats.envs[2]
-          
+    nav.navbar.navbar-expand-sm.navbar-dark.shadow-sm.p-3.mb-2(style={background:"cadetblue"})
+      div.container-fluid
+        ul.navbar-nav
+          li.nav-item
+            a( href="#").nav-link.active
+              img(src="data:image/png;base64,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" alt="cool_logo")
+          li.nav-item
+            a( href="#").nav-link.active= 'Light Reporter : '+ suiteName
+    
 
-   div.row(style={"min-height":"1000px"})
-    div.col-sm-10.mx-auto
-      div.row.no-gutters.mt-3
-        div.col-sm-2.no-gutters
-          div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
-            div.card-body(style={"flex": "0 1 auto"}) Tests: #{stats.tests}
-        div.col-sm-2
-          div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
-            div.card-body(style={"flex": "0 1 auto"}) Passed: #{stats.passes}
-        div.col-sm-2
-          div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
-            div.card-body(style={"flex": "0 1 auto"}) Failed: #{stats.failures}
-        div.col-sm-2
-          div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
-            div.card-body(style={"flex": "0 1 auto"}) Skipped: #{stats.skipped}
-        div.col-sm-2
-          div.card
-            div.card-body(style={padding:0})
-              div#pie_chart_div
-        div.col-sm-2
-          div.card
-            div.card-body(style={padding:0})
-              div#bar_chart_div
-      div.row.no-gutters.mt-3
-        div.col-sm-6
-          div.card
-            div.card-body
-              h5.card-title Scenarios
-              ul.list-group(id="sc_list")
-                each val in scenarios
-                  li.list-group-item.text-truncate(id="sc_"+val.uuid) #{val.title}
-                    span.badge.bg-secondary.float-end #{val.duration} ms
-                    div.progress
-                      div.progress-bar.progress-bar-striped.bg-success(role="progressbar" style="width: "+(val.passes.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.passes.length/val.tests.length)*100+ "%"
-                      div.progress-bar.progress-bar-striped.bg-danger(role="progressbar" style="width: "+(val.failures.length/val.tests.length)*100+"%" aria-valuemax="100")=(val.failures.length/val.tests.length)*100+"%"
-                      div.progress-bar.progress-bar-striped.bg-info(role="progressbar" style="width: "+(val.skipped.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.skipped.length/val.tests.length)*100+"%" 
+    div.row(style={"min-height":"1000px"})
+      div.col-sm-10.mx-auto
+        div.row.no-gutters.mt-3
+          div.col-sm-2.no-gutters
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+              div.card-body(style={"flex": "0 1 auto"}) Tests: #{stats.tests}
+          div.col-sm-2
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+              div.card-body(style={"flex": "0 1 auto"}) Passed: #{stats.passes}
+          div.col-sm-2
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+              div.card-body(style={"flex": "0 1 auto"}) Failed: #{stats.failures}
+          div.col-sm-2
+            div.card(style={width:"100%", height:"200px","align-items": "center","justify-content": "space-evenly"})
+              div.card-body(style={"flex": "0 1 auto"}) Skipped: #{stats.skipped}
+          div.col-sm-2
+            div.card
+              div.card-body(style={padding:0})
+                div#pie_chart_div
+                  script.
+                    generatePieChat(!{JSON.stringify(stats)},document.getElementById("pie_chart_div"));
+          div.col-sm-2
+            div.card
+              div.card-body(style={padding:0})
+                div#bar_chart_div
+                  script.
+                    generateBarChart(!{JSON.stringify(stats)},!{JSON.stringify(runs)},document.getElementById("bar_chart_div"),true);
+        div.row.no-gutters.mt-3
+          div.accordion#accordionFlushExample
+            each val,i in stats.envs 
+              - var env=val.split(",")
+              div.accordion-item
+                h6.accordion-header(id="flush-heading"+i)
+                  span.badge.bg-light.text-dark= env[2]+ "➤"+ env[0]+ "➤"+ env[1]
+                  div.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse"+i aria-expanded="false" aria-controls="flush-collapse"+i)
+                    div.col-sm-2.no-gutters
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+                        div.card-body(style={"flex": "0 1 auto"}) Tests: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.tests}
+                    div.col-sm-2
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+                        div.card-body(style={"flex": "0 1 auto"}) Passed: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.passes}
+                    div.col-sm-2
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+                        div.card-body(style={"flex": "0 1 auto"}) Failed: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.failures}
+                    div.col-sm-2
+                      div.card(style={width:"100%", height:"100px","align-items": "center","justify-content": "space-evenly"})
+                        div.card-body(style={"flex": "0 1 auto"}) Skipped: #{runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].stats.skipped}
+                    div.col-sm-2
+                      div.card
+                        div.card-body(style={padding:0})
+                          div(id="pie_chart_div_"+i , style={width:"100%", height:"100px"})
+                            script.
+                              var locator="#{val}".split(",");
+                              var data=!{JSON.stringify(runs)}[locator[2]][locator[3]!=undefined?locator[3]:"default"][locator[0]][locator[1]].stats
+                              generatePieChat(data, document.getElementById('pie_chart_div_'+#{i}));
+                    div.col-sm-2
+                      div.card
+                        div.card-body(style={padding:0})
+                          div(id="bar_chart_div_"+i , style={width:"100%", height:"100px"})
+                            script.
+                              var locator="#{val}".split(",");
+                              var data=!{JSON.stringify(runs)}[locator[2]][locator[3]!=undefined?locator[3]:"default"][locator[0]][locator[1]].scenarios
+                              generateBarChart(null,data, document.getElementById('bar_chart_div_'+#{i}),false);
 
-        div.col-sm-6
-          div.card
-            div.card-body
-              h5.card-title TestCases
-              div.accordion#accordionExample
-                each sc,i in scenarios
-                  each ts in sc.tests
-                    div.accordion-item.d-none(scenarios="sc_"+sc.uuid)
-                        h2.accordion-header(id="heading_"+ts.uuid)
-                          if ts.state=="failed"
-                            button.accordion-button.collapsed.alert-danger(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
-                          else 
-                            button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
-                        div.accordion-collapse.collapse(id="collapse_"+ts.uuid aria-labelledby="heading_"+ts.uuid data-bs-parent="#accordionExample")
-                          div.accordion-body
-                            if ts.state==="failed"
-                              div.alert.alert-danger(role="alert")= ts.err.stack
-                            each val,i in JSON.parse(ts.context)
-                              if typeof val=="object"
-                                if val.title==="Screenshot"
-                                  img(src=val.value, style={width:" -webkit-fill-available",cursor: "pointer"}, data-bs-toggle="modal",data-bs-target="#Modal_"+ts.uuid)
-                                  div.modal.fade(id="Modal_"+ts.uuid,tabindex="-1" aria-labelledby="ModalLabel_"+ts.uuid aria-hidden="true")
-                                    div.modal-dialog.modal-xl
-                                      div.modal-content
-                                        div.modal-body
-                                          img(src=val.value,style={width:" -webkit-fill-available"})
+                div.accordion-collapse.collapse(id="flush-collapse"+i aria-labelledby="flush-heading"+i data-bs-parent="#accordionFlushExample")
+                  div.accordion-body(style={display: "flex"})
+                    div.col-sm-6
+                      div.card
+                        div.card-body
+                          h5.card-title Scenarios
+                          ul.list-group(id="sc_list")
+                            each val in runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].scenarios
+                              li.list-group-item.text-truncate(id="sc_"+val.uuid) #{val.title}
+                                span.badge.bg-secondary.float-end #{val.duration} ms
+                                div.progress
+                                  div.progress-bar.progress-bar-striped.bg-success(role="progressbar" style="width: "+(val.passes.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.passes.length/val.tests.length)*100+ "%"
+                                  div.progress-bar.progress-bar-striped.bg-danger(role="progressbar" style="width: "+(val.failures.length/val.tests.length)*100+"%" aria-valuemax="100")=(val.failures.length/val.tests.length)*100+"%"
+                                  div.progress-bar.progress-bar-striped.bg-info(role="progressbar" style="width: "+(val.skipped.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.skipped.length/val.tests.length)*100+"%" 
 
-                              else 
-                                div= "⇛ "+ val  
+                    div.col-sm-6
+                      div.card
+                        div.card-body
+                          h5.card-title TestCases
+                          div.accordion#accordionExample
+                            each sc,i in runs[env[2]][env[3]!=undefined?env[3]:'default'][env[0]][env[1]].scenarios
+                              each ts in sc.tests
+                                div.accordion-item.d-none(scenarios="sc_"+sc.uuid)
+                                    h2.accordion-header(id="heading_"+ts.uuid)
+                                      if ts.state=="failed"
+                                        button.accordion-button.collapsed.alert-danger(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
+                                      else 
+                                        button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid)= ts.title
+                                    div.accordion-collapse.collapse(id="collapse_"+ts.uuid aria-labelledby="heading_"+ts.uuid data-bs-parent="#accordionExample")
+                                      div.accordion-body
+                                        if ts.state==="failed"
+                                          div.alert.alert-danger(role="alert")= ts.err.stack
+                                        each val,i in JSON.parse(ts.context)
+                                          if typeof val=="object"
+                                            if val.title==="Screenshot"
+                                              img(src=val.value, style={width:" -webkit-fill-available",cursor: "pointer"}, data-bs-toggle="modal",data-bs-target="#Modal_"+ts.uuid)
+                                              div.modal.fade(id="Modal_"+ts.uuid,tabindex="-1" aria-labelledby="ModalLabel_"+ts.uuid aria-hidden="true")
+                                                div.modal-dialog.modal-xl
+                                                  div.modal-content
+                                                    div.modal-body
+                                                      img(src=val.value,style={width:" -webkit-fill-available"})
 
-                    
+                                          else 
+                                            div= "⇛ "+ val 
         
 
-   
-   div.container-fluid(style={background:"cadetblue","font-size": "x-small", height:"40px"})= "Copyright © "+copyright+" , Developer : Md Sarfraj Akhtar<"+developer+">"   
-
   script.
-    var scenarios=document.querySelector('#sc_list');
-    var sc_list= Array.prototype.slice.call(scenarios.children);
-    sc_list.forEach((ele)=>{
-      sc_list[0].className=sc_list[0].className+" active"
-      document.querySelectorAll(`[scenarios="${sc_list[0].id}"]`).forEach((ts)=>{
-          //-  console.log(ts.className='accordion-item')
-           ts.className='accordion-item'
-         })
-      //- document.querySelector(`[scenarios="${}"]`);
-      //- document.querySelectorAll('[scenarios^="sc_"]');
-      //- document.querySelector(`[scenarios="${this.id}"]`)
-      ele.addEventListener("click", function () {
-       for(let i=0;i<sc_list.length;i++){
-         sc_list[i].className="list-group-item text-truncate"
-         document.querySelectorAll(`[scenarios="${sc_list[i].id}"]`).forEach((ts)=>{
-           ts.className+=" d-none"
-         })
-       }
-       this.className=this.className+ " active"
-       document.querySelectorAll(`[scenarios="${this.id}"]`).forEach((ts)=>{
-           ts.className='accordion-item'
+    var scenarios=document.querySelectorAll('#sc_list');
+    scenarios.forEach(scenario=>{
+      var sc_list= Array.prototype.slice.call(scenario.children);
+      sc_list.forEach((ele)=>{
+        sc_list[0].className=sc_list[0].className+" active"
+        document.querySelectorAll(`[scenarios="${sc_list[0].id}"]`).forEach((ts)=>{
+            //-  console.log(ts.className='accordion-item')
+            ts.className='accordion-item'
+          })
+        //- document.querySelector(`[scenarios="${}"]`);
+        //- document.querySelectorAll('[scenarios^="sc_"]');
+        //- document.querySelector(`[scenarios="${this.id}"]`)
+        ele.addEventListener("click", function () {
+        for(let i=0;i<sc_list.length;i++){
+          sc_list[i].className="list-group-item text-truncate"
+          document.querySelectorAll(`[scenarios="${sc_list[i].id}"]`).forEach((ts)=>{
+            ts.className+=" d-none"
+          })
+        }
+        this.className=this.className+ " active"
+        document.querySelectorAll(`[scenarios="${this.id}"]`).forEach((ts)=>{
+            ts.className='accordion-item'
+          })
         })
-      
       })
     })
+   

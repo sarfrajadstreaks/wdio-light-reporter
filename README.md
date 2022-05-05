@@ -14,6 +14,15 @@
 3. Screenshot embedded in html report
 4. addLabel() to include steps context or name
 
+
+## Releases
+V 0.1.9 - Initial release
+V 0.2.0 - (latest)
+  1. Include multiple enviroment runs and segregate base on enviroment.
+  2. Fix bugs
+  3. Improved performance.
+
+
 ## EXAMPLES
 
 ![Example](./ReadME/example_1.png)
