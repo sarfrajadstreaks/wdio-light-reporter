@@ -152,7 +152,7 @@ html
                               var data=!{JSON.stringify(runs)}[locator[2]][locator[3]!=undefined?locator[3]:"default"][locator[0]][locator[1]].scenarios
                               generateBarChart(null,data, document.getElementById('bar_chart_div_'+#{i}),false);
 
-                div.accordion-collapse.collapse.show(id="flush-collapse"+i aria-labelledby="flush-heading"+i data-bs-parent="#accordionFlushExample")
+                div.accordion-collapse.collapse(id="flush-collapse"+i aria-labelledby="flush-heading"+i data-bs-parent="#accordionFlushExample")
                   div.accordion-body(style={display: "flex"})
                     div.col-sm-6
                       div.card

@@ -75,12 +75,13 @@ class WdioLightReporter extends WDIOReporter {
   }
 
   onAfterCommand(cmd) {
-    const isScreenshotEndpoint = /\/session\/[^/]*\/screenshot/;
-    if (isScreenshotEndpoint.test(cmd.endpoint) && cmd.result.value) {
+    const isScreenshotEndpoint = /\/session\/[^\/]*\/screenshot/;
+    const isScreenshotCommand="takeScreenshot"
+    if ((isScreenshotEndpoint.test(cmd.endpoint)||cmd.command===isScreenshotCommand) && cmd.result.value) {
       this.currTest.addScreenshotContext(cmd.result.value);
     }
   }
-
+ 
   onTestEnd(test) {
     this.currTest.duration = test._duration;
     this.currTest.updateResult(test);
