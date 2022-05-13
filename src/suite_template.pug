@@ -178,8 +178,10 @@ html
                                     h2.accordion-header(id="heading_"+ts.uuid)
                                       if ts.state=="failed"
                                         button.accordion-button.collapsed.alert-danger(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid) !{ts.title}
+                                      else if ts.state=="skipped"
+                                        button.accordion-button.collapsed.alert-info(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid) !{ts.title}
                                       else 
-                                        button.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid) !{ts.title}
+                                        button.accordion-button.collapsed.alert-success(type="button" data-bs-toggle="collapse" data-bs-target="#collapse_"+ts.uuid aria-expanded="false" aria-controls="collapse_"+ts.uuid) !{ts.title}
                                     div.accordion-collapse.collapse(id="collapse_"+ts.uuid aria-labelledby="heading_"+ts.uuid data-bs-parent="#accordionExample")
                                       div.accordion-body
                                         if ts.state==="failed"
@@ -199,7 +201,7 @@ html
       
     div.row
         div.card
-          small(style={"padding-left":"5%"}) Copyright @ #{copyright}, Developer <a href='#{developer}'>Md Sarfraj Akhtar</a>
+          small(style={"padding-left":"5%","font-size": "8px"}) Copyright @ #{copyright}, Developer <a href='#{developer}'>Md Sarfraj Akhtar</a>
   script.
     var scenarios=document.querySelectorAll('#sc_list');
     scenarios.forEach(scenario=>{
