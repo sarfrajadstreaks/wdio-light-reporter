@@ -2,6 +2,8 @@ const WDIOReporter = require("@wdio/reporter").default;
 const Scenarios = require("./scenario");
 const Stats = require("./stats");
 const Test = require("./test");
+const path = require("path");
+const fs = require("fs");
 const process = require("process");
 class WdioLightReporter extends WDIOReporter {
   constructor(options) {
@@ -30,6 +32,17 @@ class WdioLightReporter extends WDIOReporter {
         ".json";
     }
     super(options);
+    this.userFileName=options.outputFile || 'default'
+    if(options.autoClean==true || options.autoClean==undefined){
+      fs.readdirSync(options.outputDir, (err, files) => {
+        if (err) throw err;
+        for (const file of files) {
+          fs.unlinkSync(path.join(options.outputDir, file), err => {
+            if (err) throw err;
+          });
+        }
+      });
+    }
     this.registerListeners();
   }
 
@@ -56,6 +69,7 @@ class WdioLightReporter extends WDIOReporter {
       stats: new Stats(runner.start, this.envs),
       scenarios: [],
       suites: this.testsuite,
+      userFileName:this.userFileName,
       copyrightYear: new Date().getFullYear(),
       developer: "Sarfraj",
     };
@@ -81,7 +95,12 @@ class WdioLightReporter extends WDIOReporter {
       this.currTest.addScreenshotContext(cmd.result.value);
     }
   }
- 
+  onTestFail(test){
+
+  }
+  onTestFail(test){
+
+  }
   onTestEnd(test) {
     this.currTest.duration = test._duration;
     this.currTest.updateResult(test);

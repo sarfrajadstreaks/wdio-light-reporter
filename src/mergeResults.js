@@ -3,15 +3,11 @@ const path = require("path");
 const { renderFile } = require("pug");
 const mergeResults = (...args) => {
   const dir = path.join(process.cwd(), args[0]);
-  const suiteName =
-    args[1][args[1].length - 2] === "--suite"
-      ? args[1][args[1].length - 1]
-      : "default";
-  const filePattern = `results_${suiteName}_*`;
+  const filePattern = `results_*`;
   const rawData = getDataFromFiles(dir, filePattern);
-  const mergedResults = mergeData(rawData, suiteName);
- writeFile(dir, mergedResults, suiteName);
-  generateReport(dir, mergedResults, suiteName);
+  const mergedResults = mergeData(rawData);
+  writeFile(dir, mergedResults);
+  generateReport(dir, mergedResults, rawData.data[0].userFileName);
 };
 function getFiles(dir, filePattern) {
   let files = fs.readdirSync(dir).filter(function (file) {
@@ -62,7 +58,7 @@ function updateStats(ref,data,root){
     new Date(ref.end) - new Date(ref.start)
   );
 }
-function mergeData(rawData, suiteName) {
+function mergeData(rawData) {
   let mergeResults;
   let fileNames = rawData.fileNames;
   let reference;
@@ -83,7 +79,8 @@ function mergeData(rawData, suiteName) {
     if (mergeResults === undefined) {
       mergeResults = {
         reportType: "suiteReport",
-        suiteName: suiteName,
+        suiteName: data.suites,
+        userFileName:data.userFileName,
         stats: {...stats_data},
         runs: {},
         developer: "https://github.com/sarfrajadstreaks",
@@ -127,7 +124,7 @@ function mergeData(rawData, suiteName) {
   return { mergeResults, fileNames };
 }
 
-function writeFile(dir, mergedResults, suiteName) {
+function writeFile(dir, mergedResults) {
   let filePath = "";
   var timeStamp = new Date()
     .toLocaleString()
@@ -136,21 +133,21 @@ function writeFile(dir, mergedResults, suiteName) {
   mergedResults.mergeResults.stats.timeStamp = timeStamp;
   filePath = path.join(
     dir,
-    "runReport_" + suiteName + "_" + timeStamp + ".json"
+    "runReport_"  + timeStamp + ".json"
   );
-  // mergedResults.fileNames.forEach((fileName) => {
-  //   fs.unlinkSync(dir + "/" + fileName);
-  // });
+  mergedResults.fileNames.forEach((fileName) => {
+    fs.unlinkSync(dir + "/" + fileName);
+  });
   fs.writeFileSync(filePath, JSON.stringify(mergedResults.mergeResults));
 }
-function generateReport(dir, mergedData, suiteName) {
+function generateReport(dir, mergedData, userFileName) {
   const options = { pretty: true };
   try {
     const res = renderFile(
       path.join(__dirname, "./suite_template.pug"),
       Object.assign(mergedData.mergeResults, options)
     );
-    fs.writeFileSync(path.join(dir, suiteName + ".html"), res);
+    fs.writeFileSync(path.join(dir, userFileName + ".html"), res);
   } catch (error) {
     console.error(error);
   }
