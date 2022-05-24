@@ -66,7 +66,7 @@ Each run regenerates json report for each spec files, to generate combined json 
 ```
  onComplete: function (exitCode, config, capabilities, results) {
     const mergeResults = require("wdio-light-reporter/src/mergeResults"); //you can add this on top of the file
-    mergeResults("./Results", process.argv);
+    mergeResults("./Results");
  },
 ```
 
