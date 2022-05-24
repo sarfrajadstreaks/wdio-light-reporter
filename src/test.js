@@ -1,5 +1,5 @@
 const stripAnsi = require("strip-ansi");
-const uuid = require("uuid/v4");
+const uuid = require("@supercharge/strings").uuid;
 
 module.exports = class {
     constructor(data, suiteUUID) {

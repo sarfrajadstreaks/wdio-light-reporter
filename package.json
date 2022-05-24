@@ -29,10 +29,10 @@
     "url": "https://github.com/sarfrajadstreaks/wdio-light-reporter/issues"
   },
   "dependencies": {
+    "@supercharge/strings": "^1.27.1",
     "@wdio/reporter": "^7.19.7",
     "pug": "^3.0.2",
-    "strip-ansi": "^5.2.0",
-    "uuid": "^3.4.0"
+    "strip-ansi": "^5.2.0"
   },
   "devDependencies": {
     "eslint": "^8.13.0",

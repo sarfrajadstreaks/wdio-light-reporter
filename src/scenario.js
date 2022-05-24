@@ -1,4 +1,4 @@
-const uuid = require("uuid/v4");
+const uuid = require("@supercharge/strings").uuid;
 module.exports = class {
   constructor(isRoot, data) {
     this.title = "";
