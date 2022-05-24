@@ -41,7 +41,9 @@ npm install wdio-light-reporter --save-dev
 
 ```
 reporters: ['dot', ['light',{
-      outputDir: './Results'
+      outputDir: './Results',
+      outputFile:"demo",    // html report file will be name this 
+      autoClean:false       // report folder is clean by default or when set true. Provide false if you dont want to clean the folder on each run.
   }]
 ],
 ```
@@ -90,7 +92,15 @@ describe("Show how to use addLabel ", () => {
 
 
 ```
-
+## Updates
+```
+ reporters: ['dot', ['light',{
+      outputDir: './Results',
+      outputFile:"demo",    // html report file will be name this 
+      autoClean:false       // report folder is clean by default or when set true. Provide false if you dont want to clean the folder on each run.
+  }]
+],
+```
 ## License
 
 MIT
