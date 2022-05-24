@@ -11,38 +11,26 @@ class WdioLightReporter extends WDIOReporter {
     if (options.outputDir === undefined) {
       options.outputDir = "./Light_Results";
     }
+    if(options.autoClean==true || options.autoClean==undefined){
+      try{
+        fs.readdirSync(path.join(process.cwd(),options.outputDir)).map((file)=>{
+          fs.unlinkSync(path.join(process.cwd(),options.outputDir, file), err => {
+            if (err) throw err;
+          });
+        })
+      }catch(error){
+        console.log("not file/folder to clean")
+      }
+
+    }
     if (process.argv[process.argv.length - 2] === "--suite") {
-      options.logFile =
-        options.outputDir +
-        "/results_" +
-        process.argv[process.argv.length - 1] +
-        "_" +
-        Date.now() +
-        "_" +
-        process.pid +
-        ".json";
+      options.logFile =options.outputDir +"/results_" +process.argv[process.argv.length - 1] +"_" +Date.now() +"_" +process.pid +".json";
     } else {
-      options.logFile =
-        options.outputDir +
-        "/results_default" +
-        "_" +
-        Date.now() +
-        "_" +
-        process.pid +
-        ".json";
+      options.logFile =options.outputDir +"/results_default" +"_" +Date.now() +"_" +process.pid +".json";
     }
     super(options);
     this.userFileName=options.outputFile || 'default'
-    if(options.autoClean==true || options.autoClean==undefined){
-      fs.readdirSync(options.outputDir, (err, files) => {
-        if (err) throw err;
-        for (const file of files) {
-          fs.unlinkSync(path.join(options.outputDir, file), err => {
-            if (err) throw err;
-          });
-        }
-      });
-    }
+    
     this.registerListeners();
   }
 
