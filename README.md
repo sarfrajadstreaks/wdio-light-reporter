@@ -98,6 +98,7 @@ describe("Show how to use addLabel ", () => {
  reporters: ['dot', ['light',{
       outputDir: './Results',
       outputFile:"demo",    // html report file will be name this 
+      addScreenshots: false,   // to add screenshots in report make it as true. Default is false
       autoClean:false       // report folder is clean by default or when set true. Provide false if you dont want to clean the folder on each run.
   }]
 ],
