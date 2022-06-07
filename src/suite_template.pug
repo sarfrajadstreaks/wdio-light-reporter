@@ -139,6 +139,8 @@ html
                     span(style={padding:"5px"}) <i class="fa-brands fa-windows" title= #{env[2]}></i>
                   else if env[2]==='macOS'
                     span(style={padding:"5px"}) <i class="fa-brands fa-apple" title= #{env[2]}></i>
+                  else if env[2]==='android'
+                    span(style={padding:"5px"}) <i class="fa-brands fa-android" title= #{env[2]}></i>
                   else 
                     span(style={padding:"5px"}) <i class="fa-solid fa-lightbulb" title= #{env[2]}></i>
 
@@ -233,7 +235,9 @@ html
                                                       img(src=val.value,style={width:" -webkit-fill-available"})
 
                                           else 
-                                            div= "⇛ "+ val 
+                                             div 
+                                              span(style={color: "green",padding:"2px" }) &#10003;
+                                              span= "  "+val
       
     div.row
         div.card
