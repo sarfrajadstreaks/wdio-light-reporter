@@ -5,6 +5,7 @@ const Test = require("./test");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
+let addScreenshotFlag;
 class WdioLightReporter extends WDIOReporter {
   constructor(options) {
     options = Object.assign(options);
@@ -23,6 +24,7 @@ class WdioLightReporter extends WDIOReporter {
       }
 
     }
+    addScreenshotFlag = options.addScreenshots === undefined ? false : options.addScreenshots;
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =options.outputDir +"/results_" +process.argv[process.argv.length - 1] +"_" +Date.now() +"_" +process.pid +".json";
     } else {
@@ -79,7 +81,7 @@ class WdioLightReporter extends WDIOReporter {
   onAfterCommand(cmd) {
     const isScreenshotEndpoint = /\/session\/[^\/]*\/screenshot/;
     const isScreenshotCommand="takeScreenshot"
-    if ((isScreenshotEndpoint.test(cmd.endpoint)||cmd.command===isScreenshotCommand) && cmd.result.value) {
+    if ((isScreenshotEndpoint.test(cmd.endpoint)||cmd.command===isScreenshotCommand) && cmd.result.value && addScreenshotFlag) {
       this.currTest.addScreenshotContext(cmd.result.value);
     }
   }
