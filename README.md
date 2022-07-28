@@ -42,9 +42,8 @@ npm install wdio-light-reporter --save-dev
 ```
 reporters: ['dot', ['light',{
       outputDir: './Results',
-      outputFile:"demo",    // html report file will be name this 
+      outputFile:`demo${new Date()}`,    // html report file will be name this 
       addScreenshots: false,   // to add screenshots in report make it as true. Default is false
-      autoClean:false,       // report folder is clean by default or when set true. Provide false if you dont want to clean the folder on each run.
   }]
 ],
 ```
@@ -99,7 +98,7 @@ describe("Show how to use addLabel ", () => {
       outputDir: './Results',
       outputFile:"demo",    // html report file will be name this 
       addScreenshots: false,   // to add screenshots in report make it as true. Default is false
-      autoClean:false       // report folder is clean by default or when set true. Provide false if you dont want to clean the folder on each run.
+      //autoClean:false       // removed autoClean and include the same functionality as default in mergeResult function
   }]
 ],
 ```

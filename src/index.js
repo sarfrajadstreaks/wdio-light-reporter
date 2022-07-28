@@ -12,18 +12,18 @@ class WdioLightReporter extends WDIOReporter {
     if (options.outputDir === undefined) {
       options.outputDir = "./Light_Results";
     }
-    if(options.autoClean==true || options.autoClean==undefined){
-      try{
-        fs.readdirSync(path.join(process.cwd(),options.outputDir)).map((file)=>{
-          fs.unlinkSync(path.join(process.cwd(),options.outputDir, file), err => {
-            if (err) throw err;
-          });
-        })
-      }catch(error){
-        console.log("not file/folder to clean")
-      }
+    // if(options.autoClean==true || options.autoClean==undefined){
+    //   try{
+    //     fs.readdirSync(path.join(process.cwd(),options.outputDir)).map((file)=>{
+    //       fs.unlinkSync(path.join(process.cwd(),options.outputDir, file), err => {
+    //         if (err) throw err;
+    //       });
+    //     })
+    //   }catch(error){
+    //     console.log("not file/folder to clean")
+    //   }
 
-    }
+    // }
     addScreenshotFlag = options.addScreenshots === undefined ? false : options.addScreenshots;
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =options.outputDir +"/results_" +process.argv[process.argv.length - 1] +"_" +Date.now() +"_" +process.pid +".json";

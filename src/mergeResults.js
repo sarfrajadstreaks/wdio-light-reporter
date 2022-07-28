@@ -135,9 +135,6 @@ function writeFile(dir, mergedResults) {
     dir,
     "runReport_"  + timeStamp + ".json"
   );
-  mergedResults.fileNames.forEach((fileName) => {
-    fs.unlinkSync(dir + "/" + fileName);
-  });
   fs.writeFileSync(filePath, JSON.stringify(mergedResults.mergeResults));
 }
 function generateReport(dir, mergedData, userFileName) {
@@ -148,6 +145,9 @@ function generateReport(dir, mergedData, userFileName) {
       Object.assign(mergedData.mergeResults, options)
     );
     fs.writeFileSync(path.join(dir, userFileName + ".html"), res);
+    mergedData.fileNames.forEach((fileName) => {
+      fs.unlinkSync(dir + "/" + fileName);
+    });
   } catch (error) {
     console.error(error);
   }
