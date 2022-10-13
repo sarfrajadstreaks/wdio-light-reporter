@@ -17,7 +17,7 @@
 
 ## Releases
 V 0.1.9 - Initial release
-V 0.2.0 - (latest)
+V 0.2.6 - (latest)
   1. Include multiple enviroment runs and segregate base on enviroment.
   2. Fix bugs
   3. Improved performance.

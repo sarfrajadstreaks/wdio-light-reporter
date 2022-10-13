@@ -25,7 +25,6 @@ class WdioLightReporter extends WDIOReporter {
   }
 
   onRunnerStart(runner) {
-    console.log(JSON.stringify(runner))
     this.config = runner.config;
     this.sanitizedCaps = runner.sanitizedCapabilities;
     this.envs = runner.sanitizedCapabilities.split(".");
