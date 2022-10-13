@@ -13,6 +13,7 @@ module.exports = class {
     this.uuid = uuid();
     this.beforeHooks = [];
     this.afterHooks = [];
+    this.context = addScenarioContext(data);
     this.title = data.title;
   }
   addTest(test) {
@@ -26,3 +27,16 @@ module.exports = class {
     }
   }
 };
+function addScenarioContext(data) {
+  let scContext = [];
+  if (data.context) {
+      if (Array.isArray(data.context)) {
+          data.context.forEach((ctx) => {
+              scContext.push(ctx);
+          });
+      } else {
+          scContext.push(data.context);
+      }
+  }
+  return scContext;
+}

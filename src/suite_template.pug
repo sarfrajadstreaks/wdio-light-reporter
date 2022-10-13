@@ -148,7 +148,7 @@ html
                 - var browser
                   if env[0]==='chrome'
                     span(style={padding:"5px"}) <i class="fa-brands fa-chrome" title=#{env[0]}></i> 
-                  else if env[0]==='firefix'
+                  else if env[0]==='firefox'
                     span(style={padding:"5px"}) <i class="fa-brands fa-firefox-browser" title=#{env[0]}></i>
                   else if env[0]==='msedge'
                     span(style={padding:"5px"}) <i class="fa-brands fa-edge" title=#{env[0]}></i>
@@ -158,7 +158,7 @@ html
                     span(style={padding:"5px"}) <i class="fa-solid fa-lightbulb" title=#{env[0]}></i>
                   
                   span(style={padding:"5px"}) <i class="fa-solid fa-angles-right"></i> 
-                  span(style={padding:"5px"}) #{env[1].replace(/_/g,".")}
+                  span(style={padding:"5px"}) #{env[1]!==undefined?env[1].replace(/_/g,"."):env[1]}
 
                   div.accordion-button.collapsed(type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse"+i aria-expanded="false" aria-controls="flush-collapse"+i)
                     div.col-sm-2.no-gutters
@@ -203,7 +203,12 @@ html
                                 div.progress
                                   div.progress-bar.progress-bar-striped.bg-success(role="progressbar" style="width: "+(val.passes.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.passes.length/val.tests.length)*100+ "%"
                                   div.progress-bar.progress-bar-striped.bg-danger(role="progressbar" style="width: "+(val.failures.length/val.tests.length)*100+"%" aria-valuemax="100")=(val.failures.length/val.tests.length)*100+"%"
-                                  div.progress-bar.progress-bar-striped.bg-info(role="progressbar" style="width: "+(val.skipped.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.skipped.length/val.tests.length)*100+"%" 
+                                  div.progress-bar.progress-bar-striped.bg-info(role="progressbar" style="width: "+(val.skipped.length/val.tests.length)*100+"%"  aria-valuemax="100")=(val.skipped.length/val.tests.length)*100+"%"
+                                  div.collapse(id="sc_"+val.uuid)
+                                    //- if !{val.context}!=''
+                                    div.card.card-body.text-wrap !{val.context}
+                                      
+                              
 
                     div.col-sm-6
                       div.card

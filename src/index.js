@@ -12,18 +12,6 @@ class WdioLightReporter extends WDIOReporter {
     if (options.outputDir === undefined) {
       options.outputDir = "./Light_Results";
     }
-    // if(options.autoClean==true || options.autoClean==undefined){
-    //   try{
-    //     fs.readdirSync(path.join(process.cwd(),options.outputDir)).map((file)=>{
-    //       fs.unlinkSync(path.join(process.cwd(),options.outputDir, file), err => {
-    //         if (err) throw err;
-    //       });
-    //     })
-    //   }catch(error){
-    //     console.log("not file/folder to clean")
-    //   }
-
-    // }
     addScreenshotFlag = options.addScreenshots === undefined ? false : options.addScreenshots;
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =options.outputDir +"/results_" +process.argv[process.argv.length - 1] +"_" +Date.now() +"_" +process.pid +".json";
@@ -37,6 +25,7 @@ class WdioLightReporter extends WDIOReporter {
   }
 
   onRunnerStart(runner) {
+    console.log(JSON.stringify(runner))
     this.config = runner.config;
     this.sanitizedCaps = runner.sanitizedCapabilities;
     this.envs = runner.sanitizedCapabilities.split(".");
@@ -112,13 +101,19 @@ class WdioLightReporter extends WDIOReporter {
 
   // addContext functionality
   registerListeners() {
-    process.on("wdio-light-reporter:addLabel", this.addSomeContext.bind(this));
+    process.on("wdio-light-reporter:addLabel", this.addTestContext.bind(this));
+    process.on("wdio-light-reporter:addDetail", this.addScenarioContext.bind(this));
   }
-
-  addSomeContext(object) {
+  addScenarioContext(object) {
+    this.currSuite.context.push(object);
+  }
+  addTestContext(object) {
     this.currTest.context.push(object);
   }
 
+  static addDetail(context){
+    process.emit("wdio-light-reporter:addDetail", context);
+  }
   static addLabel(context) {
     process.emit("wdio-light-reporter:addLabel", context);
   }
