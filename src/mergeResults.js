@@ -19,7 +19,14 @@ function getDataFromFiles(dir, filePattern) {
   const fileNames = getFiles(dir, filePattern);
   const data = [];
   fileNames.forEach((fileName) => {
-    data.push(JSON.parse(fs.readFileSync(`${dir}/${fileName}`)));
+    try {
+      let tempData=fs.readFileSync(`${dir}/${fileName}`);
+      let tempJson=JSON.parse(tempData);
+      data.push(tempJson);
+    } catch (error) {
+      console.log("INDETERMINANT ISSUE")
+    }
+  
   });
   return { data, fileNames };
 }
