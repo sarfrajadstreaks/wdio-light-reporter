@@ -1,7 +1,7 @@
-const stripAnsi = require("strip-ansi");
-const uuid = require("@supercharge/strings").uuid;
+import stripAnsi from "strip-ansi";
+import { uuid } from "@supercharge/strings";
 
-module.exports = class {
+export default class Test {
     constructor(data, suiteUUID) {
         this.title = data.title;
         this.fullTitle = data.title;

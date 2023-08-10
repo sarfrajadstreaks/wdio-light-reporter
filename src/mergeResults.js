@@ -1,7 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const { renderFile } = require("pug");
-const mergeResults = (...args) => {
+import fs from "fs";
+import path from "path";
+import { renderFile } from "pug";
+
+export const mergeResults = (...args) => {
   const dir = path.join(process.cwd(), args[0]);
   const filePattern = `results_*`;
   const rawData = getDataFromFiles(dir, filePattern);
@@ -159,4 +160,3 @@ function generateReport(dir, mergedData, userFileName) {
     console.error(error);
   }
 }
-module.exports = mergeResults;

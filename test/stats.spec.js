@@ -1,4 +1,4 @@
-const Stats = require("../src/stats");
+import Stats from "../src/stats";
 
 describe("Stats Class tests", () => {
   it("Should successfully increment the Scenario Count", () => {

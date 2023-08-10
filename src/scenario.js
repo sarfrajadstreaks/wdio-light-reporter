@@ -1,5 +1,6 @@
-const uuid = require("@supercharge/strings").uuid;
-module.exports = class {
+import { uuid } from "@supercharge/strings";
+
+export default class Scenario {
   constructor(isRoot, data) {
     this.title = "";
     this.tests = [];
