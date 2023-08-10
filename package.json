@@ -29,26 +29,27 @@
     "url": "https://github.com/sarfrajadstreaks/wdio-light-reporter/issues"
   },
   "dependencies": {
-    "@supercharge/strings": "^1.27.1",
-    "@wdio/reporter": "^7.19.7",
-    "pug": "^3.0.2",
-    "strip-ansi": "^5.2.0"
+    "@wdio/reporter": "^8.14.0",
+    "pug": "^3.0.2"
   },
   "devDependencies": {
-    "eslint": "^8.13.0",
-    "eslint-config-standard": "^10.2.0",
-    "eslint-plugin-import": "^2.7.0",
-    "eslint-plugin-node": "^5.1.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "jest": "^27.5.1",
-    "jest-matchers": "^18.1.0"
+    "@babel/preset-env": "^7.22.10",
+    "@supercharge/strings": "^2.0.0",
+    "eslint": "^8.46.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-standard": "^4.1.0",
+    "jest": "^29.6.2",
+    "jest-matchers": "^18.1.0",
+    "strip-ansi": "^7.1.0"
   },
   "contributors": [
     "Sarfraj Akhtar"
   ],
   "peerDependencies": {
-    "@wdio/cli": "^7.19.7"
+    "@wdio/cli": "^8.14.4"
   },
   "jest": {
     "testPathIgnorePatterns": [
