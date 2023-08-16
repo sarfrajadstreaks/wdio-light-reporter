@@ -46,7 +46,8 @@
     "uuid": "^9.0.0"
   },
   "contributors": [
-    "Sarfraj Akhtar"
+    "Sarfraj Akhtar",
+    "Bhanu Agarwal"
   ],
   "peerDependencies": {
     "@wdio/cli": "^8.15.0"
