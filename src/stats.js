@@ -1,4 +1,4 @@
-module.exports = class {
+export default class {
   constructor(start, env) {
     this.scenarios = 0;
     this.tests = 0;

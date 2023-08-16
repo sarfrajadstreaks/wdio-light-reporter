@@ -1,7 +1,8 @@
-const fs = require("fs");
-const path = require("path");
-const { renderFile } = require("pug");
-const mergeResults = (...args) => {
+import fs from "fs";
+import path from "path";
+import { renderFile } from "pug";
+
+export const mergeResults = (...args) => {
   const dir = path.join(process.cwd(), args[0]);
   const filePattern = `results_*`;
   const rawData = getDataFromFiles(dir, filePattern);
@@ -20,34 +21,34 @@ function getDataFromFiles(dir, filePattern) {
   const data = [];
   fileNames.forEach((fileName) => {
     try {
-      let tempData=fs.readFileSync(`${dir}/${fileName}`);
-      let tempJson=JSON.parse(tempData);
+      let tempData = fs.readFileSync(`${dir}/${fileName}`);
+      let tempJson = JSON.parse(tempData);
       data.push(tempJson);
     } catch (error) {
       console.log("INDETERMINANT ISSUE")
     }
-  
+
   });
   return { data, fileNames };
 }
-function updateStats(ref,data,root){
+function updateStats(ref, data, root) {
   ref.scenarios += data.stats.scenarios;
   ref.tests += data.stats.tests;
   ref.passes += data.stats.passes;
   ref.skipped += data.stats.skipped;
   ref.failures += data.stats.failures;
-  if(root){
-    if(!ref.envs.includes(data.stats.envs.toLocaleString()))
+  if (root) {
+    if (!ref.envs.includes(data.stats.envs.toLocaleString()))
       ref.envs.push(data.stats.envs.toLocaleString());
   }
-    
+
   if (ref.start === "") {
     ref.start = data.stats.start;
   }
   if (
     ref.start != "" &&
     new Date(data.stats.start).getTime() <
-      new Date(ref.start).getTime()
+    new Date(ref.start).getTime()
   ) {
     ref.start = data.stats.start;
   }
@@ -57,7 +58,7 @@ function updateStats(ref,data,root){
   if (
     ref.end != "" &&
     new Date(data.stats.end).getTime() >
-      new Date(ref.end).getTime()
+    new Date(ref.end).getTime()
   ) {
     ref.end = data.stats.end;
   }
@@ -69,7 +70,7 @@ function mergeData(rawData) {
   let mergeResults;
   let fileNames = rawData.fileNames;
   let reference;
-  let stats_data={
+  let stats_data = {
     scenarios: 0,
     tests: 0,
     passes: 0,
@@ -87,45 +88,45 @@ function mergeData(rawData) {
       mergeResults = {
         reportType: "suiteReport",
         suiteName: data.suites,
-        userFileName:data.userFileName,
-        stats: {...stats_data},
+        userFileName: data.userFileName,
+        stats: { ...stats_data },
         runs: {},
         developer: "https://github.com/sarfrajadstreaks",
         copyright: new Date().getFullYear(),
       };
     }
     reference = mergeResults;
-    updateStats(reference.stats,data,true)
+    updateStats(reference.stats, data, true)
     let tempRef;
     if (reference.runs[data.stats.envs[2]] === undefined) {
       reference.runs[data.stats.envs[2]] = {}; //linux
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"] = {}; //default
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] = {}; //chrome
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"] = { ...stats_data }
+      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"], data)
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"] = data.scenarios
     } else if (reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"] === undefined) {
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"] = {}; //default
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] = {}; //chrome
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"] = { ...stats_data }
+      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"], data)
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"] = data.scenarios
     } else if (reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] === undefined) {
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] = {};
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"] = { ...stats_data }
+      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"], data)
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"] = data.scenarios
     } else if (reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] == undefined) {
       reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
-    }else{
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"].concat(data.scenarios);
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"] = { ...stats_data }
+      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"], data)
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"] = data.scenarios
+    } else {
+      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"], data)
+      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"] = reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"].concat(data.scenarios);
     }
   });
   return { mergeResults, fileNames };
@@ -140,7 +141,7 @@ function writeFile(dir, mergedResults) {
   mergedResults.mergeResults.stats.timeStamp = timeStamp;
   filePath = path.join(
     dir,
-    "runReport_"  + timeStamp + ".json"
+    "runReport_" + timeStamp + ".json"
   );
   fs.writeFileSync(filePath, JSON.stringify(mergedResults.mergeResults));
 }
@@ -159,4 +160,3 @@ function generateReport(dir, mergedData, userFileName) {
     console.error(error);
   }
 }
-module.exports = mergeResults;

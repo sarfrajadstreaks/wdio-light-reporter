@@ -1,5 +1,5 @@
-const Scenario = require("../src/scenario");
-const Test = require("../src/test");
+import Scenario from "../src/scenario.js";
+import Test from "../src/test.js";
 
 describe("Scenario Class Tests", () => {
   it("Should successfully instantiate a ROOT scenario", () => {
