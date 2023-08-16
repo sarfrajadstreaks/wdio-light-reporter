@@ -1,2 +1,2 @@
-const mergeResults = require("../src/mergeResults");
+import mergeResults from "../src/mergeResults";
 mergeResults("./TestData");

@@ -1,4 +1,4 @@
-const WdioLightReporter = require("../src/index").default;
+import { default as WdioLightReporter } from "../src/index";
 
 describe("Reporter Tests", () => {
   const runner = {
