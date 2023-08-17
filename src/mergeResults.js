@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { renderFile } from "pug";
 
-export const mergeResults = (...args) => {
+export default mergeResults = (...args) => {
   const dir = path.join(process.cwd(), args[0]);
   const filePattern = `results_*`;
   const rawData = getDataFromFiles(dir, filePattern);

@@ -50,7 +50,7 @@
     "Bhanu Agarwal"
   ],
   "peerDependencies": {
-    "@wdio/cli": "^8.15.0"
+    "@wdio/cli": "^8.15.5"
   },
   "jest": {
     "testPathIgnorePatterns": [
