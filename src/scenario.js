@@ -1,5 +1,6 @@
-const uuid = require("@supercharge/strings").uuid;
-module.exports = class {
+import { v4 as uuid } from "uuid";
+
+export default class {
   constructor(isRoot, data) {
     this.title = "";
     this.tests = [];
@@ -30,13 +31,13 @@ module.exports = class {
 function addScenarioContext(data) {
   let scContext = [];
   if (data.context) {
-      if (Array.isArray(data.context)) {
-          data.context.forEach((ctx) => {
-              scContext.push(ctx);
-          });
-      } else {
-          scContext.push(data.context);
-      }
+    if (Array.isArray(data.context)) {
+      data.context.forEach((ctx) => {
+        scContext.push(ctx);
+      });
+    } else {
+      scContext.push(data.context);
+    }
   }
   return scContext;
 }

@@ -1,4 +1,4 @@
-const Test = require("../src/test");
+import Test from "../src/test.js";
 
 describe("Test Class Tests", () => {
   it("Should successfully instantiate a TEST object without context", () => {

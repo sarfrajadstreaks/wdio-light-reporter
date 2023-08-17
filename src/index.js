@@ -1,12 +1,13 @@
-const WDIOReporter = require("@wdio/reporter").default;
-const Scenarios = require("./scenario");
-const Stats = require("./stats");
-const Test = require("./test");
-const path = require("path");
-const fs = require("fs");
-const process = require("process");
+import { default as WDIOReporter } from "@wdio/reporter";
+import Scenarios from "./scenario.js";
+import Stats from "./stats.js";
+import Test from "./test.js";
+import path from "path";
+import fs from "fs";
+import process from "process";
+
 let addScreenshotFlag;
-class WdioLightReporter extends WDIOReporter {
+export default class WdioLightReporter extends WDIOReporter {
   constructor(options) {
     options = Object.assign(options);
     if (options.outputDir === undefined) {
@@ -117,5 +118,3 @@ class WdioLightReporter extends WDIOReporter {
     process.emit("wdio-light-reporter:addLabel", context);
   }
 }
-
-exports.default = WdioLightReporter;
