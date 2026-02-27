@@ -111,7 +111,6 @@ describe("Reporter Tests", () => {
     reporter.onTestEnd(test);
 
     reporter.onSuiteEnd(scenario);
-    console.log(reporter.results);
     expect(reporter.currSuite.duration).toBe(scenario.duration);
     expect(reporter.results.stats.scenarios).toBe(1);
   });

@@ -2,32 +2,35 @@
 
 ## Inspired by HTML and Mochawesome reporter
 
-!Philosphy:
-
-> This reporter does not support cucumber Report regeneration and is developed keeping in mind the bdd an mocha framework.
-> Here,`describe()` section is considered as test scenario and `it()` as testcase inside the test scenarios.
+> **Philosophy:** This reporter does not support Cucumber report regeneration and is developed keeping in mind the BDD and Mocha framework.
+> Here, `describe()` section is considered as a test scenario and `it()` as a test case inside the test scenarios.
 
 ## FEATURES
 
 1. Easy setup
-2. Enhanced UI
-3. Screenshot embedded in html report
-4. addLabel() to include steps context or name
+2. Enhanced UI with Bootstrap 5
+3. Screenshot embedded in HTML report
+4. `addLabel()` to include step context or name
+5. `addDetail()` to add context at the scenario level
+6. Multi-environment run support with environment-based segregation
+7. Expand/collapse all environments with tri-state checkbox
+8. Share / Save as PDF from the navbar
 
 
 ## Releases
 V 0.1.9 - Initial release
-V 0.2.6 - (latest)
-  1. Include multiple enviroment runs and segregate base on enviroment.
+V 0.2.6
+  1. Include multiple environment runs and segregate based on environment.
   2. Fix bugs
   3. Improved performance.
+V 1.0.0 (latest)
+  1. Redesigned UI with Bootstrap 5 and custom stat/chart cards.
+  2. Environment cards with platform/browser icons and inline stats.
+  3. Expand/collapse all with tri-state checkbox.
+  4. Share button (Save as PDF).
+  5. Responsive accordion headers that shrink before wrapping.
+  6. Code cleanup and dead code removal.
 
-
-## EXAMPLES
-
-![Example](./ReadME/example_1.png)
-![Example](./ReadME/example_2.png)
-![Example](./ReadME/example_3.png)
 
 ## Installation
 
@@ -39,69 +42,76 @@ npm install wdio-light-reporter --save-dev
 
 ## Configuration
 
-```
-reporters: ['dot', ['light',{
-      outputDir: './Results',
-      outputFile:`demo${new Date()}`,    // html report file will be name this 
-      addScreenshots: false,   // to add screenshots in report make it as true. Default is false
+```js
+reporters: ['dot', ['light', {
+      outputDir: './Light_Results',       // default: './Light_Results'
+      outputFile: 'demo',                 // html report filename (default: 'default')
+      addScreenshots: false,              // embed screenshots in report (default: false)
   }]
 ],
 ```
 
 ## Screenshots
 
-The Reporter does not have capability to automatically configure to take screenshots but however if manually configured, it listen to the event and attach the screenshots in the HTML report.
-**To include screenshots in the report add below code in the afterTest() hook in the wdio conf file.**
+The reporter does not automatically take screenshots, but if manually configured, it listens to the event and attaches the screenshots in the HTML report.
+**To include screenshots in the report, add the below code in the `afterTest()` hook in your wdio conf file:**
 
-```
-afterTest: async function (test,context,{ error, result, duration, passed, retries }) {
-    if (!passed) {await browser.takeScreenshot()}
+```js
+afterTest: async function (test, context, { error, result, duration, passed, retries }) {
+    if (!passed) { await browser.takeScreenshot() }
 },
 ```
 
-## ResultFiles
+## Result Files
 
-Each run regenerates json report for each spec files, to generate combined json and HTML report, add below code in the **onComplete()** hook in wdio conf file
+Each run generates a JSON report for each spec file. To generate a combined JSON and HTML report, add the below code in the **`onComplete()`** hook in your wdio conf file:
 
+```js
+onComplete: function (exitCode, config, capabilities, results) {
+    const mergeResults = require("wdio-light-reporter/src/mergeResults");
+    mergeResults("./Light_Results");
+},
 ```
- onComplete: function (exitCode, config, capabilities, results) {
-    const mergeResults = require("wdio-light-reporter/src/mergeResults"); //you can add this on top of the file
-    mergeResults("./Results");
- },
-```
 
-> If you run your test wihout any --suite option then it considers default as the suite
-> Reporter does not works if you give multiple parameters as suites while run.
-> wdio run `wdio.conf.js --suite firstSuite` - **(WOKRS FINE)** :)  
->  wdio run `wdio.conf.js --suite firstSuite --suite secondSuite` **(DOES NOT WORK)** :(
+> If you run your tests without any `--suite` option, it considers `default` as the suite.
+> The reporter does not work if you provide multiple `--suite` parameters in a single run.
+> `wdio run wdio.conf.js --suite firstSuite` — **(WORKS FINE)** :)
+> `wdio run wdio.conf.js --suite firstSuite --suite secondSuite` — **(DOES NOT WORK)** :(
 
 ## Adding Context
 
-> You can use `useLabel()` to add context to any steps or added to include it as steps.
+### `addLabel()` — Add step-level context
 
-```
+Use `addLabel()` to add context to any test step. It will appear as step info in the report.
+
+```js
 const { addLabel } = require("wdio-light-reporter").default;
-describe("Show how to use addLabel ", () => {
-  it("report will added this a steps/context in report", async () => {
+
+describe("Show how to use addLabel", () => {
+  it("report will add this as steps/context in report", async () => {
       addLabel("Log Example 1 as step 1")
-      console.log("Log Example 1 )
+      console.log("Log Example 1")
       addLabel("Log Example 2 as step 2")
-      console.log("Log Example 2 )
+      console.log("Log Example 2")
   })
 })
+```
 
+### `addDetail()` — Add scenario-level context
 
+Use `addDetail()` to add context at the scenario (describe) level.
+
+```js
+const { addDetail } = require("wdio-light-reporter").default;
+
+describe("Show how to use addDetail", () => {
+  addDetail("This context will appear at the scenario level")
+  it("some test case", async () => {
+      // ...
+  })
+})
 ```
-## Updates
-```
- reporters: ['dot', ['light',{
-      outputDir: './Results',
-      outputFile:"demo",    // html report file will be name this 
-      addScreenshots: false,   // to add screenshots in report make it as true. Default is false
-      //autoClean:false       // removed autoClean and include the same functionality as default in mergeResult function
-  }]
-],
-```
+
 ## License
 
 MIT
