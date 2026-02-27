@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { renderFile } = require("pug");
+
 const mergeResults = (...args) => {
   const dir = path.join(process.cwd(), args[0]);
   const filePattern = `results_*`;
@@ -9,45 +10,61 @@ const mergeResults = (...args) => {
   writeFile(dir, mergedResults);
   generateReport(dir, mergedResults, rawData.data[0].userFileName);
 };
+
 function getFiles(dir, filePattern) {
-  let files = fs.readdirSync(dir).filter(function (file) {
+  return fs.readdirSync(dir).filter(function (file) {
     return file.match(filePattern);
   });
-  return files;
 }
+
 function getDataFromFiles(dir, filePattern) {
   const fileNames = getFiles(dir, filePattern);
   const data = [];
   fileNames.forEach((fileName) => {
     try {
-      let tempData=fs.readFileSync(`${dir}/${fileName}`);
-      let tempJson=JSON.parse(tempData);
+      const tempData = fs.readFileSync(`${dir}/${fileName}`);
+      const tempJson = JSON.parse(tempData);
       data.push(tempJson);
     } catch (error) {
-      console.log("INDETERMINANT ISSUE")
+      console.warn(`Warning: Could not parse result file "${fileName}":`, error.message);
     }
-  
   });
   return { data, fileNames };
 }
-function updateStats(ref,data,root){
+
+function createStatsData() {
+  return {
+    scenarios: 0,
+    tests: 0,
+    passes: 0,
+    skipped: 0,
+    failures: 0,
+    start: "",
+    end: "",
+    duration: 0,
+    timeStamp: "",
+    envs: [],
+  };
+}
+
+function updateStats(ref, data, root) {
   ref.scenarios += data.stats.scenarios;
   ref.tests += data.stats.tests;
   ref.passes += data.stats.passes;
   ref.skipped += data.stats.skipped;
   ref.failures += data.stats.failures;
-  if(root){
-    if(!ref.envs.includes(data.stats.envs.toLocaleString()))
+  if (root) {
+    if (!ref.envs.includes(data.stats.envs.toLocaleString())) {
       ref.envs.push(data.stats.envs.toLocaleString());
+    }
   }
-    
+
   if (ref.start === "") {
     ref.start = data.stats.start;
   }
   if (
-    ref.start != "" &&
-    new Date(data.stats.start).getTime() <
-      new Date(ref.start).getTime()
+    ref.start !== "" &&
+    new Date(data.stats.start).getTime() < new Date(ref.start).getTime()
   ) {
     ref.start = data.stats.start;
   }
@@ -55,95 +72,79 @@ function updateStats(ref,data,root){
     ref.end = data.stats.end;
   }
   if (
-    ref.end != "" &&
-    new Date(data.stats.end).getTime() >
-      new Date(ref.end).getTime()
+    ref.end !== "" &&
+    new Date(data.stats.end).getTime() > new Date(ref.end).getTime()
   ) {
     ref.end = data.stats.end;
   }
-  ref.duration = Math.abs(
-    new Date(ref.end) - new Date(ref.start)
-  );
+  ref.duration = Math.abs(new Date(ref.end) - new Date(ref.start));
 }
-function mergeData(rawData) {
-  let mergeResults;
-  let fileNames = rawData.fileNames;
-  let reference;
-  let stats_data={
-    scenarios: 0,
-    tests: 0,
-    passes: 0,
-    pending: 0,
-    failures: 0,
-    start: "",
-    end: "",
-    duration: 0,
-    skipped: 0,
-    timeStamp: "",
-    envs: [],
+
+/**
+ * Navigates into the nested runs object, creating intermediate keys as needed.
+ * Returns the leaf node for [platform][profile][browser][version].
+ */
+function getOrCreateRunBucket(runs, envs) {
+  const platform = envs[2];
+  const profile = envs[3] !== undefined ? envs[3] : "default";
+  const browser = envs[0];
+  const version = envs[1];
+
+  if (runs[platform] === undefined) {
+    runs[platform] = {};
   }
+  if (runs[platform][profile] === undefined) {
+    runs[platform][profile] = {};
+  }
+  if (runs[platform][profile][browser] === undefined) {
+    runs[platform][profile][browser] = {};
+  }
+  if (runs[platform][profile][browser][version] === undefined) {
+    runs[platform][profile][browser][version] = {
+      stats: createStatsData(),
+      scenarios: [],
+    };
+  }
+  return runs[platform][profile][browser][version];
+}
+
+function mergeData(rawData) {
+  let mergedResult;
+  const fileNames = rawData.fileNames;
+
   rawData.data.forEach((data) => {
-    if (mergeResults === undefined) {
-      mergeResults = {
+    if (mergedResult === undefined) {
+      mergedResult = {
         reportType: "suiteReport",
         suiteName: data.suites,
-        userFileName:data.userFileName,
-        stats: {...stats_data},
+        userFileName: data.userFileName,
+        stats: createStatsData(),
         runs: {},
         developer: "https://github.com/sarfrajadstreaks",
         copyright: new Date().getFullYear(),
       };
     }
-    reference = mergeResults;
-    updateStats(reference.stats,data,true)
-    let tempRef;
-    if (reference.runs[data.stats.envs[2]] === undefined) {
-      reference.runs[data.stats.envs[2]] = {}; //linux
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"] = {}; //default
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] = {}; //chrome
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
-    } else if (reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"] === undefined) {
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"] = {}; //default
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] = {}; //chrome
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
-    } else if (reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] === undefined) {
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]] = {};
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
-    } else if (reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] == undefined) {
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]] = {}; //chrome_100_9
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"]={...stats_data}
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=data.scenarios
-    }else{
-      updateStats(reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["stats"],data)
-      reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"]=reference.runs[data.stats.envs[2]][data.stats.envs[3] !== undefined ? data.stats.envs[3] : "default"][data.stats.envs[0]][data.stats.envs[1]]["scenarios"].concat(data.scenarios);
-    }
+
+    updateStats(mergedResult.stats, data, true);
+
+    const bucket = getOrCreateRunBucket(mergedResult.runs, data.stats.envs);
+    updateStats(bucket.stats, data);
+    bucket.scenarios = bucket.scenarios.concat(data.scenarios);
   });
-  return { mergeResults, fileNames };
+
+  return { mergeResults: mergedResult, fileNames };
 }
 
 function writeFile(dir, mergedResults) {
-  let filePath = "";
-  var timeStamp = new Date()
+  const timeStamp = new Date()
     .toLocaleString()
     .replace(/\/|:/g, "-")
     .replace(", ", "_");
   mergedResults.mergeResults.stats.timeStamp = timeStamp;
-  filePath = path.join(
-    dir,
-    "runReport_"  + timeStamp + ".json"
-  );
+  const filePath = path.join(dir, "runReport_" + timeStamp + ".json");
   fs.writeFileSync(filePath, JSON.stringify(mergedResults.mergeResults));
 }
+
 function generateReport(dir, mergedData, userFileName) {
   const options = { pretty: true };
   try {
@@ -156,7 +157,8 @@ function generateReport(dir, mergedData, userFileName) {
       fs.unlinkSync(dir + "/" + fileName);
     });
   } catch (error) {
-    console.error(error);
+    console.error("Failed to generate HTML report:", error);
   }
 }
+
 module.exports = mergeResults;

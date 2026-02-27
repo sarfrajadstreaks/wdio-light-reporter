@@ -5,20 +5,21 @@ const Test = require("./test");
 const path = require("path");
 const fs = require("fs");
 const process = require("process");
-let addScreenshotFlag;
+
 class WdioLightReporter extends WDIOReporter {
   constructor(options) {
     options = Object.assign(options);
     if (options.outputDir === undefined) {
       options.outputDir = "./Light_Results";
     }
-    addScreenshotFlag = options.addScreenshots === undefined ? false : options.addScreenshots;
+    const addScreenshots = options.addScreenshots === undefined ? false : options.addScreenshots;
     if (process.argv[process.argv.length - 2] === "--suite") {
       options.logFile =options.outputDir +"/results_" +process.argv[process.argv.length - 1] +"_" +Date.now() +"_" +process.pid +".json";
     } else {
       options.logFile =options.outputDir +"/results_default" +"_" +Date.now() +"_" +process.pid +".json";
     }
     super(options);
+    this.addScreenshotFlag = addScreenshots;
     this.userFileName=options.outputFile || 'default'
     
     this.registerListeners();
@@ -40,7 +41,7 @@ class WdioLightReporter extends WDIOReporter {
     if (process.argv[process.argv.length - 2] === "--suite") {
       this.testsuite = process.argv[process.argv.length - 1];
     }
-    if (this.testsuite == "") {
+    if (this.testsuite === "") {
       this.testsuite = "default";
     }
     this.results = {
@@ -69,16 +70,14 @@ class WdioLightReporter extends WDIOReporter {
   onAfterCommand(cmd) {
     const isScreenshotEndpoint = /\/session\/[^\/]*\/screenshot/;
     const isScreenshotCommand="takeScreenshot"
-    if ((isScreenshotEndpoint.test(cmd.endpoint)||cmd.command===isScreenshotCommand) && cmd.result.value && addScreenshotFlag) {
+    if ((isScreenshotEndpoint.test(cmd.endpoint)||cmd.command===isScreenshotCommand) && cmd.result.value && this.addScreenshotFlag) {
       this.currTest.addScreenshotContext(cmd.result.value);
     }
   }
   onTestFail(test){
-
+    // error handling for test failures can be added here
   }
-  onTestFail(test){
 
-  }
   onTestEnd(test) {
     this.currTest.duration = test._duration;
     this.currTest.updateResult(test);

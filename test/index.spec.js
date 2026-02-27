@@ -40,17 +40,20 @@ describe("Reporter Tests", () => {
     expect(reporter.currTest.title).toBe(test.title);
   });
   it("onAfterCommand", () => {
+    // Create a reporter with screenshots enabled
+    const screenshotReporter = new WdioLightReporter({ addScreenshots: true });
+    screenshotReporter.onRunnerStart(runner);
     const scenario = { title: "sample scenario", uuid: "1234" };
     const test = { title: "this is a test", uuid: "9876" };
     const command = {
       endpoint: "/session/123456/screenshot/",
       result: { value: "abcdefg" },
     };
-    reporter.onSuiteStart(scenario);
-    reporter.onTestStart(test);
+    screenshotReporter.onSuiteStart(scenario);
+    screenshotReporter.onTestStart(test);
 
-    reporter.onAfterCommand(command);
-    expect(reporter.currTest.context[0]).toMatchObject({
+    screenshotReporter.onAfterCommand(command);
+    expect(screenshotReporter.currTest.context[0]).toMatchObject({
       title: "Screenshot",
       value: "data:image/jpeg;base64,abcdefg",
     });

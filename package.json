@@ -11,8 +11,7 @@
   },
   "main": "src/index.js",
   "files": [
-    "src",
-    "mergeResults.js"
+    "src"
   ],
   "scripts": {
     "lint": "eslint ./src test/",
