@@ -86,7 +86,7 @@ function updateStats(ref, data, root) {
  */
 function getOrCreateRunBucket(runs, envs) {
   const platform = envs[2];
-  const profile = envs[3] !== undefined ? envs[3] : "default";
+  const profile = envs[3] ?? "default";
   const browser = envs[0];
   const version = envs[1];
 

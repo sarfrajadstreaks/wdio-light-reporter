@@ -8,6 +8,8 @@ describe("Reporter Tests", () => {
   let reporter;
 
   beforeEach(() => {
+    process.removeAllListeners("wdio-light-reporter:addLabel");
+    process.removeAllListeners("wdio-light-reporter:addDetail");
     reporter = new WdioLightReporter({});
     reporter.onRunnerStart(runner);
   });
@@ -123,5 +125,98 @@ describe("Reporter Tests", () => {
     reporter.onRunnerEnd(runner);
     expect(reporter.results.stats.end).toBe(runner.end);
     expect(reporter.results.stats.duration).toBe(runner.duration);
+  });
+
+  it("addLabel - adds context to current test", () => {
+    const scenario = { title: "Login Suite" };
+    const test = { title: "should display login page", uuid: "8888" };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
+
+    WdioLightReporter.addLabel("Login Suite Label");
+    expect(reporter.currTest.context).toContainEqual("Login Suite Label");
+  });
+
+  it("addLabel - multiple labels on same test", () => {
+    const scenario = { title: "Checkboxes Page" };
+    const test = { title: "should display checkboxes", uuid: "7777" };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
+
+    WdioLightReporter.addLabel("Checkboxes Suite");
+    WdioLightReporter.addLabel("Component: Form Controls");
+    expect(reporter.currTest.context).toContainEqual("Checkboxes Suite");
+    expect(reporter.currTest.context).toContainEqual("Component: Form Controls");
+    expect(reporter.currTest.context.length).toBe(2);
+  });
+
+  it("addDetail - adds context to current suite", () => {
+    const scenario = { title: "Dynamic Loading Page" };
+    const test = { title: "should load element", uuid: "6666" };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
+
+    WdioLightReporter.addDetail("Priority: High | Type: Integration");
+    expect(reporter.currSuite.context).toContainEqual("Priority: High | Type: Integration");
+  });
+
+  it("addDetail - multiple details on same suite", () => {
+    const scenario = { title: "Advanced Suite" };
+    const test = { title: "should run advanced test", uuid: "5555" };
+    reporter.onSuiteStart(scenario);
+    reporter.onTestStart(test);
+
+    WdioLightReporter.addDetail("Module: Authentication");
+    WdioLightReporter.addDetail("Expected: Intentional failure for report validation");
+    expect(reporter.currSuite.context).toContainEqual("Module: Authentication");
+    expect(reporter.currSuite.context).toContainEqual("Expected: Intentional failure for report validation");
+  });
+
+  it("addLabel - does not crash when no test is active", () => {
+    expect(() => WdioLightReporter.addLabel("No test active")).not.toThrow();
+  });
+
+  it("addDetail - does not crash when no suite is active", () => {
+    const freshReporter = new WdioLightReporter({});
+    freshReporter.onRunnerStart(runner);
+    expect(() => WdioLightReporter.addDetail("No suite active")).not.toThrow();
+  });
+
+  it("addLabel and addDetail together in a test flow", () => {
+    const scenario = { title: "Login Page Tests" };
+    const test1 = {
+      title: "should display the login page",
+      uuid: "4444",
+      _duration: "200",
+      state: "passed",
+    };
+    const test2 = {
+      title: "should login with valid credentials",
+      uuid: "3333",
+      _duration: "500",
+      state: "passed",
+    };
+
+    reporter.onSuiteStart(scenario);
+
+    // First test with label and detail
+    reporter.onTestStart(test1);
+    WdioLightReporter.addLabel("Login Suite");
+    WdioLightReporter.addDetail("Module: Authentication");
+    reporter.onTestEnd(test1);
+
+    // Verify label is serialized in test context
+    expect(JSON.parse(reporter.currSuite.tests[0].context)).toContainEqual("Login Suite");
+    // Verify detail is on the suite
+    expect(reporter.currSuite.context).toContainEqual("Module: Authentication");
+
+    // Second test with its own label
+    reporter.onTestStart(test2);
+    WdioLightReporter.addLabel("Valid Credentials Test");
+    reporter.onTestEnd(test2);
+
+    expect(JSON.parse(reporter.currSuite.tests[1].context)).toContainEqual("Valid Credentials Test");
+    // First test should not have second test's label
+    expect(JSON.parse(reporter.currSuite.tests[0].context)).not.toContainEqual("Valid Credentials Test");
   });
 });

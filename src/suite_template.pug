@@ -57,7 +57,7 @@ html
       .tree-chevron { font-size: 0.65rem; transition: transform 0.2s ease; width: 14px; text-align: center; }
       .tree-node.open > .list-group-item .tree-chevron { transform: rotate(90deg); }
       .tree-leaf-detail { display: none; }
-      .tree-leaf.open + .tree-leaf-detail { display: block; }
+      [data-tree-leaf].open + .tree-leaf-detail { display: block; }
       .tree-progress { display: flex; gap: 2px; height: 4px; border-radius: 999px; overflow: hidden; width: 80px; flex-shrink: 0; }
       .tree-progress > span { height: 100%; }
       .badge--pass { background: color-mix(in srgb, var(--c-pass) 15%, white) !important; color: var(--c-pass) !important; }
@@ -292,18 +292,19 @@ html
                                     each ctxVal in JSON.parse(ts.context)
                                       if typeof ctxVal==='object'
                                         if ctxVal.title==='Screenshot'
-                                          img.rounded.mt-1(src=ctxVal.value, style={width:'100%',cursor:'pointer'}, data-bs-toggle="modal",data-bs-target="#Modal_"+ts.uuid)
+                                          img.rounded.border.mt-1(src=ctxVal.value, style={width:'120px',height:'80px',objectFit:'cover',cursor:'pointer'}, data-bs-toggle="modal",data-bs-target="#Modal_"+ts.uuid, title="Click to enlarge")
                                           div.modal.fade(id="Modal_"+ts.uuid,tabindex="-1" aria-hidden="true")
-                                            div.modal-dialog.modal-xl
+                                            div.modal-dialog.modal-xl.modal-dialog-centered
                                               div.modal-content
-                                                div.modal-body
+                                                div.modal-body.p-1
                                                   img(src=ctxVal.value,style={width:'100%'})
                                       else
                                         div.d-flex.align-items-center.gap-1.small
                                           span.text-success &#10003;
                                           span= ctxVal
-                                if sc.context
-                                  div.list-group-item.text-muted.fst-italic.ps-4.small= sc.context
+                                if sc.context && sc.context.length
+                                  each ctxItem in sc.context
+                                    div.list-group-item.text-muted.fst-italic.ps-4.small= ctxItem
       
     div.footer
         small Copyright &copy; #{copyright} &middot; <i class="fa-brands fa-github"></i> <a href='#{developer}'>sarfrajadstreaks</a>

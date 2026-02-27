@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@supercharge/strings": "^2.0.0",
-    "@wdio/reporter": "^7.19.7",
+    "@wdio/reporter": "^9.24.0",
     "pug": "^3.0.3",
     "strip-ansi": "^6.0.1"
   },
@@ -46,7 +46,7 @@
     "Sarfraj Akhtar"
   ],
   "peerDependencies": {
-    "@wdio/cli": "^7.19.7"
+    "@wdio/cli": "^9.0.0"
   },
   "jest": {
     "testPathIgnorePatterns": [

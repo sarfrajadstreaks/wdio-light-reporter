@@ -103,10 +103,14 @@ class WdioLightReporter extends WDIOReporter {
     process.on("wdio-light-reporter:addDetail", this.addScenarioContext.bind(this));
   }
   addScenarioContext(object) {
-    this.currSuite.context.push(object);
+    if (this.currSuite && Array.isArray(this.currSuite.context)) {
+      this.currSuite.context.push(object);
+    }
   }
   addTestContext(object) {
-    this.currTest.context.push(object);
+    if (this.currTest && Array.isArray(this.currTest.context)) {
+      this.currTest.context.push(object);
+    }
   }
 
   static addDetail(context){
