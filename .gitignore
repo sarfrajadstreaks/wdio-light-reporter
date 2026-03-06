@@ -7,3 +7,7 @@ package-lock.json
 TestData/
 
 Light_Results/
+
+# Sample/test files
+generate-sample-report.js
+sample-report.html
