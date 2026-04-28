@@ -1,6 +1,5 @@
 const stripAnsi = require("strip-ansi");
-const { Str } = require("@supercharge/strings");
-const uuid = () => Str.uuid();
+const { randomUUID: uuid } = require("crypto");
 
 module.exports = class {
     constructor(data, suiteUUID) {

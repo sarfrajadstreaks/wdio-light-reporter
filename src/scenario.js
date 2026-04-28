@@ -1,5 +1,4 @@
-const { Str } = require("@supercharge/strings");
-const uuid = () => Str.uuid();
+const { randomUUID: uuid } = require("crypto");
 module.exports = class {
   constructor(isRoot, data) {
     this.title = "";

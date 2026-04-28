@@ -21,6 +21,7 @@ class WdioLightReporter extends WDIOReporter {
     super(options);
     this.addScreenshotFlag = addScreenshots;
     this.userFileName=options.outputFile || 'default'
+    this.theme = options.theme === 'light' ? 'light' : 'dark'
     
     this.registerListeners();
   }
@@ -49,6 +50,7 @@ class WdioLightReporter extends WDIOReporter {
       scenarios: [],
       suites: this.testsuite,
       userFileName:this.userFileName,
+      theme: this.theme,
       copyrightYear: new Date().getFullYear(),
       developer: "Sarfraj",
     };
@@ -68,9 +70,7 @@ class WdioLightReporter extends WDIOReporter {
   }
 
   onAfterCommand(cmd) {
-    const isScreenshotEndpoint = /\/session\/[^\/]*\/screenshot/;
-    const isScreenshotCommand="takeScreenshot"
-    if ((isScreenshotEndpoint.test(cmd.endpoint)||cmd.command===isScreenshotCommand) && cmd.result.value && this.addScreenshotFlag) {
+    if (cmd.command === "takeScreenshot" && cmd.result?.value && this.addScreenshotFlag) {
       this.currTest.addScreenshotContext(cmd.result.value);
     }
   }

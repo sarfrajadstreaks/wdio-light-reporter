@@ -47,6 +47,7 @@ reporters: ['dot', ['light', {
       outputDir: './Light_Results',       // default: './Light_Results'
       outputFile: 'demo',                 // html report filename (default: 'default')
       addScreenshots: false,              // embed screenshots in report (default: false)
+      theme: 'dark',                      // report theme: 'dark' | 'light' (default: 'dark')
   }]
 ],
 ```
