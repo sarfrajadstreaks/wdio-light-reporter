@@ -31,6 +31,7 @@ V 1.0.0 (latest)
   5. Responsive accordion headers that shrink before wrapping.
   6. Code cleanup and dead code removal.
 
+![alt text](image-1.png)
 ![alt text](image.png)
 ## Installation
 
