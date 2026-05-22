@@ -118,6 +118,7 @@ function mergeData(rawData) {
         reportType: "suiteReport",
         suiteName: data.suites,
         userFileName: data.userFileName,
+        theme: data.theme || 'dark',
         stats: createStatsData(),
         runs: {},
         developer: "https://github.com/sarfrajadstreaks",

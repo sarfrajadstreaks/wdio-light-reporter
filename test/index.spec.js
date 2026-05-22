@@ -48,7 +48,7 @@ describe("Reporter Tests", () => {
     const scenario = { title: "sample scenario", uuid: "1234" };
     const test = { title: "this is a test", uuid: "9876" };
     const command = {
-      endpoint: "/session/123456/screenshot/",
+      command: "takeScreenshot",
       result: { value: "abcdefg" },
     };
     screenshotReporter.onSuiteStart(scenario);
